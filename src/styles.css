@@ -1,0 +1,113 @@
+/* /Users/leo/Projects/10000-hours-growth-app/src/styles.css */
+:root {
+  color: #4b3b29;
+  background: #f6efe0;
+  font-family: 'Inter', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: linear-gradient(180deg, #f7efd7 0%, #f4e8d3 100%);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  border: 1px solid #dcc7aa;
+  border-radius: 16px;
+  padding: 12px 14px;
+  background: #fffdf7;
+}
+
+button {
+  border: 0;
+  cursor: pointer;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: 1fr auto;
+}
+
+.app-content {
+  padding: 20px 16px 96px;
+}
+
+.page-card,
+.hero-card {
+  background: rgba(255, 252, 245, 0.92);
+  border-radius: 28px;
+  padding: 20px;
+  box-shadow: 0 12px 30px rgba(90, 62, 40, 0.08);
+}
+
+.hero-card {
+  max-width: 520px;
+  margin: 48px auto;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: #8c6d45;
+}
+
+.muted {
+  color: #7c6750;
+}
+
+.stack-xs > * + * {
+  margin-top: 6px;
+}
+
+.stack-md > * + * {
+  margin-top: 16px;
+}
+
+.primary-button {
+  width: 100%;
+  border-radius: 18px;
+  padding: 14px 16px;
+  background: #c99b6b;
+  color: white;
+  font-weight: 700;
+}
+
+.tab-bar {
+  position: sticky;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  padding: 10px 12px 20px;
+  background: rgba(248, 242, 232, 0.95);
+  backdrop-filter: blur(16px);
+}
+
+.tab-link {
+  text-decoration: none;
+  text-align: center;
+  color: #7f6a54;
+  padding: 10px 8px;
+  border-radius: 16px;
+}
+
+.tab-link.active {
+  background: #efe0c5;
+  color: #5a3e28;
+  font-weight: 700;
+}
