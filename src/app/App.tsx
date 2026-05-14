@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { OnboardingPage } from '../features/onboarding/OnboardingPage'
+import { AppProvider, useAppContext } from './AppProvider'
 import { AppShell } from './AppShell'
 
 type AppProps = {
@@ -16,9 +17,13 @@ function PlaceholderPage({ title }: { title: string }) {
   )
 }
 
-export function App({ ready = false, onInitialize = async () => {} }: AppProps) {
-  if (!ready) {
-    return <OnboardingPage onSubmit={onInitialize} />
+function AppInner({ ready, onInitialize }: AppProps) {
+  const app = useAppContext()
+  const resolvedReady = ready ?? app.ready
+  const resolvedInitialize = onInitialize ?? app.initializeHousehold
+
+  if (!resolvedReady) {
+    return <OnboardingPage onSubmit={resolvedInitialize} />
   }
 
   return (
@@ -33,5 +38,13 @@ export function App({ ready = false, onInitialize = async () => {} }: AppProps) 
         </Route>
       </Routes>
     </BrowserRouter>
+  )
+}
+
+export function App(props: AppProps) {
+  return (
+    <AppProvider>
+      <AppInner {...props} />
+    </AppProvider>
   )
 }
