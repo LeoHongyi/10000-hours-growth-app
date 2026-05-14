@@ -1,4 +1,4 @@
-import { FormEvent, useState } from 'react'
+import { FormEvent, useMemo, useState } from 'react'
 
 type OnboardingPageProps = {
   onSubmit: (names: string[]) => Promise<void> | void
@@ -6,16 +6,20 @@ type OnboardingPageProps = {
 
 export function OnboardingPage({ onSubmit }: OnboardingPageProps) {
   const [names, setNames] = useState(['', ''])
+  const [error, setError] = useState('')
+  const cleanedNames = useMemo(() => names.map((name) => name.trim()).filter(Boolean), [names])
+  const canSubmit = cleanedNames.length === 2
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const cleaned = names.map((name) => name.trim()).filter(Boolean)
 
-    if (cleaned.length !== 2) {
+    if (!canSubmit) {
+      setError('请先填写两位大人的称呼')
       return
     }
 
-    await onSubmit(cleaned)
+    setError('')
+    await onSubmit(cleanedNames)
   }
 
   return (
@@ -44,7 +48,8 @@ export function OnboardingPage({ onSubmit }: OnboardingPageProps) {
             />
           </label>
 
-          <button className="primary-button" type="submit">进入成长记录</button>
+          {error ? <p className="error-text">{error}</p> : null}
+          <button className="primary-button" type="submit" disabled={!canSubmit}>进入成长记录</button>
         </form>
       </section>
     </main>
