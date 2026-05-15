@@ -55,8 +55,13 @@ export function ManualEntryForm({ members, goals, tasks, onSubmit }: ManualEntry
 
     const parsedMinutes = Number(durationMinutes)
 
-    if (!Number.isFinite(parsedMinutes) || parsedMinutes <= 0) {
+    if (!Number.isFinite(parsedMinutes)) {
       setError('请输入有效的分钟数')
+      return
+    }
+
+    if (parsedMinutes <= 0) {
+      setError('时长必须大于 0 分钟')
       return
     }
 

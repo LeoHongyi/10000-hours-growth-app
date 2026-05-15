@@ -35,7 +35,7 @@ describe('ManualEntryForm', () => {
     await user.click(screen.getByRole('button', { name: '保存补录' }))
 
     expect(onSubmit).not.toHaveBeenCalled()
-    expect(screen.getByText('请输入有效的分钟数')).toBeInTheDocument()
+    expect(screen.getByText('时长必须大于 0 分钟')).toBeInTheDocument()
   })
 
   it('blocks non-numeric duration input', async () => {

@@ -1,4 +1,5 @@
 import { useAppContext } from '../../app/AppProvider'
+import { ActiveTimerCard } from '../timer/ActiveTimerCard'
 import { ManualEntryForm } from './ManualEntryForm'
 
 export function RecordsPage() {
@@ -8,6 +9,25 @@ export function RecordsPage() {
 
   return (
     <section className="stack-md">
+      <ActiveTimerCard />
+
+      <section className="page-card stack-md">
+        <h2>开始计时</h2>
+        {app.goals.length === 0 ? (
+          <p className="muted">还没有目标，先去创建年度目标。</p>
+        ) : (
+          app.goals.map((goal) => (
+            <button
+              key={goal.id}
+              className="secondary-button"
+              onClick={() => app.startActiveTimer({ memberId: goal.memberId, goalId: goal.id })}
+            >
+              开始 {goal.title}
+            </button>
+          ))
+        )}
+      </section>
+
       <ManualEntryForm
         members={app.members}
         goals={app.goals}

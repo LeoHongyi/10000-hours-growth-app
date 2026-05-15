@@ -1,5 +1,5 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from 'react'
-import type { ActiveTimer, AppSnapshot, Goal, GoalTask, StudyRecord } from '../domain/types'
+import type { ActiveTimer, AppSnapshot } from '../domain/types'
 import {
   finishTimer,
   loadActiveTimer,
@@ -37,9 +37,6 @@ type AppContextValue = AppSnapshot & {
   activeTimerGoalTitle: string
   initializeHousehold: (names: string[]) => Promise<void>
   refresh: () => Promise<void>
-  createGoal: (input: Pick<Goal, 'memberId' | 'title' | 'targetMinutes'>) => Promise<Goal>
-  createTask: (input: Pick<GoalTask, 'goalId' | 'title'>) => Promise<GoalTask>
-  addStudyRecord: (input: Omit<StudyRecord, 'id' | 'createdAt'>) => Promise<StudyRecord>
   addManualRecord: (input: ManualRecordInput) => Promise<void>
   startActiveTimer: (input: { memberId: string; goalId: string; taskId?: string }) => void
   pauseActiveTimer: () => void
@@ -81,21 +78,6 @@ export function AppProvider({ children }: PropsWithChildren) {
         await refresh()
       },
       refresh,
-      createGoal: async (input) => {
-        const goal = await repository.createGoal(input)
-        await refresh()
-        return goal
-      },
-      createTask: async (input) => {
-        const task = await repository.createTask(input)
-        await refresh()
-        return task
-      },
-      addStudyRecord: async (input) => {
-        const record = await repository.addStudyRecord(input)
-        await refresh()
-        return record
-      },
       addManualRecord: async (input) => {
         await repository.addStudyRecord({
           ...input,
@@ -131,7 +113,7 @@ export function AppProvider({ children }: PropsWithChildren) {
           goalId: activeTimer.goalId,
           taskId: activeTimer.taskId,
           date: result.finishedAt.slice(0, 10),
-          startTime: activeTimer.startedAt,
+          startTime: result.startedAt,
           endTime: result.finishedAt,
           durationMinutes: result.durationMinutes,
           note: note.trim(),
