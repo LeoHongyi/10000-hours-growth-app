@@ -1,5 +1,5 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from 'react'
-import type { ActiveTimer, AppSnapshot } from '../domain/types'
+import type { AppSnapshot } from '../domain/types'
 import {
   finishTimer,
   loadActiveTimer,
@@ -7,6 +7,7 @@ import {
   resumeTimer,
   saveActiveTimer,
   startTimer,
+  type StoredActiveTimer,
 } from '../features/timer/timerStorage'
 import { createAppRepository } from '../storage/repository'
 
@@ -33,7 +34,7 @@ type ManualRecordInput = {
 type AppContextValue = AppSnapshot & {
   hydrated: boolean
   ready: boolean
-  activeTimer: ActiveTimer | null
+  activeTimer: StoredActiveTimer | null
   activeTimerGoalTitle: string
   initializeHousehold: (names: string[]) => Promise<void>
   refresh: () => Promise<void>
@@ -49,7 +50,7 @@ const AppContext = createContext<AppContextValue | null>(null)
 export function AppProvider({ children }: PropsWithChildren) {
   const [snapshot, setSnapshot] = useState<AppSnapshot>(emptySnapshot)
   const [hydrated, setHydrated] = useState(false)
-  const [activeTimer, setActiveTimer] = useState<ActiveTimer | null>(() => loadActiveTimer())
+  const [activeTimer, setActiveTimer] = useState<StoredActiveTimer | null>(() => loadActiveTimer())
 
   const refresh = async () => {
     setSnapshot(await repository.getSnapshot())
@@ -60,7 +61,7 @@ export function AppProvider({ children }: PropsWithChildren) {
     void refresh()
   }, [])
 
-  const persistTimer = (timer: ActiveTimer | null) => {
+  const persistTimer = (timer: StoredActiveTimer | null) => {
     setActiveTimer(timer)
     saveActiveTimer(timer)
   }

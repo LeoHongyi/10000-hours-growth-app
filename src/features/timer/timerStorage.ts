@@ -2,7 +2,11 @@ import type { ActiveTimer } from '../../domain/types'
 
 const STORAGE_KEY = 'growth-app-active-timer'
 
-export function startTimer(input: Pick<ActiveTimer, 'memberId' | 'goalId' | 'taskId' | 'startedAt'>): ActiveTimer {
+type StoredActiveTimer = ActiveTimer & {
+  currentStartedAt: string
+}
+
+export function startTimer(input: Pick<ActiveTimer, 'memberId' | 'goalId' | 'taskId' | 'startedAt'>): StoredActiveTimer {
   return {
     ...input,
     currentStartedAt: input.startedAt,
@@ -11,7 +15,7 @@ export function startTimer(input: Pick<ActiveTimer, 'memberId' | 'goalId' | 'tas
   }
 }
 
-export function pauseTimer(timer: ActiveTimer, pausedAt: string): ActiveTimer {
+export function pauseTimer(timer: StoredActiveTimer, pausedAt: string): StoredActiveTimer {
   if (timer.isPaused) {
     return timer
   }
@@ -26,7 +30,7 @@ export function pauseTimer(timer: ActiveTimer, pausedAt: string): ActiveTimer {
   }
 }
 
-export function resumeTimer(timer: ActiveTimer, resumedAt: string): ActiveTimer {
+export function resumeTimer(timer: StoredActiveTimer, resumedAt: string): StoredActiveTimer {
   return {
     ...timer,
     currentStartedAt: resumedAt,
@@ -34,7 +38,7 @@ export function resumeTimer(timer: ActiveTimer, resumedAt: string): ActiveTimer 
   }
 }
 
-export function finishTimer(timer: ActiveTimer, finishedAt: string) {
+export function finishTimer(timer: StoredActiveTimer, finishedAt: string) {
   const liveSeconds = timer.isPaused
     ? 0
     : Math.max(0, (Date.parse(finishedAt) - Date.parse(timer.currentStartedAt)) / 1000)
@@ -46,7 +50,7 @@ export function finishTimer(timer: ActiveTimer, finishedAt: string) {
   }
 }
 
-export function saveActiveTimer(timer: ActiveTimer | null) {
+export function saveActiveTimer(timer: StoredActiveTimer | null) {
   if (!timer) {
     window.localStorage.removeItem(STORAGE_KEY)
     return
@@ -55,12 +59,14 @@ export function saveActiveTimer(timer: ActiveTimer | null) {
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(timer))
 }
 
-export function loadActiveTimer(): ActiveTimer | null {
+export function loadActiveTimer(): StoredActiveTimer | null {
   const raw = window.localStorage.getItem(STORAGE_KEY)
 
   if (!raw) {
     return null
   }
 
-  return JSON.parse(raw) as ActiveTimer
+  return JSON.parse(raw) as StoredActiveTimer
 }
+
+export type { StoredActiveTimer }
