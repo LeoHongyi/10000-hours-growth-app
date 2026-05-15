@@ -65,6 +65,34 @@ describe('app repository', () => {
       isManualEntry: false,
     })
 
+    await repo.savePlans([
+      {
+        id: 'plan-1',
+        memberId: members[0].id,
+        goalId: goal.id,
+        date: '2026-05-15',
+        title: '妈妈 · 蒙氏学习',
+        suggestedMinutes: 45,
+        status: 'pending',
+        source: 'system',
+      },
+    ])
+
+    await repo.saveMilestone({
+      id: 'milestone-1',
+      goalId: goal.id,
+      milestoneHours: 10,
+      reachedAt: '2026-05-15T00:00:00.000Z',
+      message: '小花送给你',
+    })
+
+    await repo.saveDiaryEntry({
+      id: 'diary-1',
+      date: '2026-05-15',
+      note: '今天会自己拍手了',
+      createdAt: '2026-05-15T00:00:00.000Z',
+    })
+
     await repo.saveHousehold(['外婆', '外公'])
 
     const snapshot = await repo.getSnapshot()
@@ -75,5 +103,6 @@ describe('app repository', () => {
     expect(snapshot.records).toEqual([])
     expect(snapshot.plans).toEqual([])
     expect(snapshot.milestones).toEqual([])
+    expect(snapshot.diary).toEqual([])
   })
 })
