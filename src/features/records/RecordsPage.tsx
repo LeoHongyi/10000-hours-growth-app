@@ -5,6 +5,8 @@ import { ManualEntryForm } from './ManualEntryForm'
 export function RecordsPage() {
   const app = useAppContext()
 
+  const activeGoals = app.goals.filter((goal) => goal.isActive)
+  const tasksByGoalId = new Map(activeGoals.map((goal) => [goal.id, app.tasks.filter((task) => task.goalId === goal.id)]))
   const goalTitleById = new Map(app.goals.map((goal) => [goal.id, goal.title]))
 
   return (
@@ -13,17 +15,28 @@ export function RecordsPage() {
 
       <section className="page-card stack-md">
         <h2>开始计时</h2>
-        {app.goals.length === 0 ? (
-          <p className="muted">还没有目标，先去创建年度目标。</p>
+        {activeGoals.length === 0 ? (
+          <p className="muted">还没有启用中的目标，先去创建年度目标。</p>
         ) : (
-          app.goals.map((goal) => (
-            <button
-              key={goal.id}
-              className="secondary-button"
-              onClick={() => app.startActiveTimer({ memberId: goal.memberId, goalId: goal.id })}
-            >
-              开始 {goal.title}
-            </button>
+          activeGoals.map((goal) => (
+            <div key={goal.id} className="stack-xs">
+              <button
+                className="secondary-button"
+                onClick={() => app.startActiveTimer({ memberId: goal.memberId, goalId: goal.id })}
+              >
+                开始 {goal.title}
+              </button>
+
+              {tasksByGoalId.get(goal.id)?.map((task) => (
+                <button
+                  key={task.id}
+                  className="ghost-button"
+                  onClick={() => app.startActiveTimer({ memberId: goal.memberId, goalId: goal.id, taskId: task.id })}
+                >
+                  开始 {goal.title} · {task.title}
+                </button>
+              ))}
+            </div>
           ))
         )}
       </section>
