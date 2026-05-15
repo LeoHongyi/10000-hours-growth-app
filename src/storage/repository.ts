@@ -28,8 +28,15 @@ export function createAppRepository(name?: string) {
           sortOrder: index,
         }))
 
-        const tx = db.transaction(['members'], 'readwrite')
-        await tx.objectStore('members').clear()
+        const tx = db.transaction(['members', 'goals', 'tasks', 'records', 'plans', 'milestones'], 'readwrite')
+        await Promise.all([
+          tx.objectStore('members').clear(),
+          tx.objectStore('goals').clear(),
+          tx.objectStore('tasks').clear(),
+          tx.objectStore('records').clear(),
+          tx.objectStore('plans').clear(),
+          tx.objectStore('milestones').clear(),
+        ])
         await Promise.all(members.map((member) => tx.objectStore('members').put(member)))
         await tx.done
         return members
