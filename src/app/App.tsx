@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { OnboardingPage } from '../features/onboarding/OnboardingPage'
-import { AppProvider, useAppContext } from './AppProvider'
+import { AppProvider, useOptionalAppContext } from './AppProvider'
 import { AppShell } from './AppShell'
 
 type AppProps = {
@@ -17,15 +17,7 @@ function PlaceholderPage({ title }: { title: string }) {
   )
 }
 
-function AppInner({ ready, onInitialize }: AppProps) {
-  const app = useAppContext()
-  const resolvedReady = ready ?? app.ready
-  const resolvedInitialize = onInitialize ?? app.initializeHousehold
-
-  if (!resolvedReady) {
-    return <OnboardingPage onSubmit={resolvedInitialize} />
-  }
-
+function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
@@ -41,10 +33,33 @@ function AppInner({ ready, onInitialize }: AppProps) {
   )
 }
 
+const noopInitialize = async () => {}
+
+function AppInner({ ready, onInitialize }: AppProps) {
+  const app = useOptionalAppContext()
+  const resolvedReady = ready ?? app?.ready ?? false
+  const resolvedInitialize = onInitialize ?? app?.initializeHousehold ?? noopInitialize
+  const hydrated = app?.hydrated ?? true
+
+  if (!hydrated) {
+    return <section className="page-card"><p>正在准备成长记录…</p></section>
+  }
+
+  if (!resolvedReady) {
+    return <OnboardingPage onSubmit={resolvedInitialize} />
+  }
+
+  return <AppRoutes />
+}
+
 export function App(props: AppProps) {
+  if (props.ready !== undefined || props.onInitialize !== undefined) {
+    return <AppInner {...props} />
+  }
+
   return (
     <AppProvider>
-      <AppInner {...props} />
+      <AppInner />
     </AppProvider>
   )
 }
