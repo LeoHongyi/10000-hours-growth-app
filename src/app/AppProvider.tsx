@@ -1,5 +1,13 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from 'react'
-import type { AppSnapshot, Goal, GoalTask, StudyRecord } from '../domain/types'
+import type { ActiveTimer, AppSnapshot, Goal, GoalTask, StudyRecord } from '../domain/types'
+import {
+  finishTimer,
+  loadActiveTimer,
+  pauseTimer,
+  resumeTimer,
+  saveActiveTimer,
+  startTimer,
+} from '../features/timer/timerStorage'
 import { createAppRepository } from '../storage/repository'
 
 const repository = createAppRepository()
@@ -13,14 +21,30 @@ const emptySnapshot: AppSnapshot = {
   diary: [],
 }
 
+type ManualRecordInput = {
+  memberId: string
+  goalId: string
+  taskId?: string
+  date: string
+  durationMinutes: number
+  note: string
+}
+
 type AppContextValue = AppSnapshot & {
   hydrated: boolean
   ready: boolean
+  activeTimer: ActiveTimer | null
+  activeTimerGoalTitle: string
   initializeHousehold: (names: string[]) => Promise<void>
   refresh: () => Promise<void>
   createGoal: (input: Pick<Goal, 'memberId' | 'title' | 'targetMinutes'>) => Promise<Goal>
   createTask: (input: Pick<GoalTask, 'goalId' | 'title'>) => Promise<GoalTask>
   addStudyRecord: (input: Omit<StudyRecord, 'id' | 'createdAt'>) => Promise<StudyRecord>
+  addManualRecord: (input: ManualRecordInput) => Promise<void>
+  startActiveTimer: (input: { memberId: string; goalId: string; taskId?: string }) => void
+  pauseActiveTimer: () => void
+  resumeActiveTimer: () => void
+  finishActiveTimer: (note: string) => Promise<void>
 }
 
 const AppContext = createContext<AppContextValue | null>(null)
@@ -28,6 +52,7 @@ const AppContext = createContext<AppContextValue | null>(null)
 export function AppProvider({ children }: PropsWithChildren) {
   const [snapshot, setSnapshot] = useState<AppSnapshot>(emptySnapshot)
   const [hydrated, setHydrated] = useState(false)
+  const [activeTimer, setActiveTimer] = useState<ActiveTimer | null>(() => loadActiveTimer())
 
   const refresh = async () => {
     setSnapshot(await repository.getSnapshot())
@@ -38,11 +63,19 @@ export function AppProvider({ children }: PropsWithChildren) {
     void refresh()
   }, [])
 
+  const persistTimer = (timer: ActiveTimer | null) => {
+    setActiveTimer(timer)
+    saveActiveTimer(timer)
+  }
+
   const value = useMemo<AppContextValue>(
     () => ({
       ...snapshot,
       hydrated,
       ready: snapshot.members.length === 2,
+      activeTimer,
+      activeTimerGoalTitle:
+        snapshot.goals.find((goal) => goal.id === activeTimer?.goalId)?.title ?? '进行中的专注',
       initializeHousehold: async (names) => {
         await repository.saveHousehold(names)
         await refresh()
@@ -63,8 +96,52 @@ export function AppProvider({ children }: PropsWithChildren) {
         await refresh()
         return record
       },
+      addManualRecord: async (input) => {
+        await repository.addStudyRecord({
+          ...input,
+          startTime: undefined,
+          endTime: undefined,
+          isManualEntry: true,
+        })
+        await refresh()
+      },
+      startActiveTimer: (input) => {
+        persistTimer(startTimer({ ...input, startedAt: new Date().toISOString() }))
+      },
+      pauseActiveTimer: () => {
+        if (!activeTimer) {
+          return
+        }
+        persistTimer(pauseTimer(activeTimer, new Date().toISOString()))
+      },
+      resumeActiveTimer: () => {
+        if (!activeTimer) {
+          return
+        }
+        persistTimer(resumeTimer(activeTimer, new Date().toISOString()))
+      },
+      finishActiveTimer: async (note) => {
+        if (!activeTimer) {
+          return
+        }
+
+        const result = finishTimer(activeTimer, new Date().toISOString())
+        await repository.addStudyRecord({
+          memberId: activeTimer.memberId,
+          goalId: activeTimer.goalId,
+          taskId: activeTimer.taskId,
+          date: result.finishedAt.slice(0, 10),
+          startTime: activeTimer.startedAt,
+          endTime: result.finishedAt,
+          durationMinutes: result.durationMinutes,
+          note: note.trim(),
+          isManualEntry: false,
+        })
+        persistTimer(null)
+        await refresh()
+      },
     }),
-    [hydrated, snapshot],
+    [activeTimer, hydrated, snapshot],
   )
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>

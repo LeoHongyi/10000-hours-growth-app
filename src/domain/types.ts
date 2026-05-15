@@ -72,6 +72,7 @@ export type ActiveTimer = {
   goalId: string
   taskId?: string
   startedAt: string
+  currentStartedAt: string
   accumulatedSeconds: number
   isPaused: boolean
 }
