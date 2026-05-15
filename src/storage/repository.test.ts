@@ -41,6 +41,40 @@ describe('app repository', () => {
     expect(snapshot.records[0].note).toBe('完成第 3 章听课')
   })
 
+  it('keeps completedMinutes equal to the total stored study minutes for a goal', async () => {
+    const repo = createAppRepository('growth-app-test')
+
+    const members = await repo.saveHousehold(['妈妈', '爸爸'])
+    const goal = await repo.createGoal({
+      memberId: members[0].id,
+      title: '蒙氏学习',
+      targetMinutes: 500 * 60,
+    })
+
+    await repo.addStudyRecord({
+      memberId: members[0].id,
+      goalId: goal.id,
+      date: '2026-05-14',
+      durationMinutes: 30,
+      note: '晨间阅读',
+      isManualEntry: false,
+    })
+
+    await repo.addStudyRecord({
+      memberId: members[0].id,
+      goalId: goal.id,
+      date: '2026-05-14',
+      durationMinutes: 45,
+      note: '晚间听课',
+      isManualEntry: false,
+    })
+
+    const snapshot = await repo.getSnapshot()
+
+    expect(snapshot.goals[0].completedMinutes).toBe(75)
+    expect(snapshot.records.reduce((sum, record) => sum + record.durationMinutes, 0)).toBe(75)
+  })
+
   it('removes orphaned study data when the household is re-initialized', async () => {
     const repo = createAppRepository('growth-app-test')
 

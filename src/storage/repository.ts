@@ -76,7 +76,11 @@ export function createAppRepository(name?: string) {
 
     async addStudyRecord(input: Omit<StudyRecord, 'id' | 'createdAt'>): Promise<StudyRecord> {
       return withDb(async (db) => {
-        const goal = await db.get('goals', input.goalId)
+        const tx = db.transaction(['goals', 'records'], 'readwrite')
+        const goalStore = tx.objectStore('goals')
+        const recordStore = tx.objectStore('records')
+        const goal = await goalStore.get(input.goalId)
+
         if (!goal) {
           throw new Error('Goal not found')
         }
@@ -87,11 +91,12 @@ export function createAppRepository(name?: string) {
           createdAt: now(),
         }
 
-        await db.put('records', record)
-        await db.put('goals', {
+        await recordStore.put(record)
+        await goalStore.put({
           ...goal,
           completedMinutes: goal.completedMinutes + input.durationMinutes,
         })
+        await tx.done
 
         return record
       })
