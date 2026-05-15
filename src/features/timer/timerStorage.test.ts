@@ -32,4 +32,19 @@ describe('timer storage helpers', () => {
     expect(result.startedAt).toBe('2026-05-14T09:00:00.000Z')
     expect(result.finishedAt).toBe('2026-05-14T10:10:00.000Z')
   })
+
+  it('does not reset the running segment when resume is called on an active timer', () => {
+    const running = startTimer({
+      memberId: 'member-1',
+      goalId: 'goal-1',
+      taskId: 'task-1',
+      startedAt: '2026-05-14T09:00:00.000Z',
+    })
+
+    const resumedAgain = resumeTimer(running, '2026-05-14T09:10:00.000Z')
+    const result = finishTimer(resumedAgain, '2026-05-14T09:30:00.000Z')
+
+    expect(result.durationMinutes).toBe(30)
+    expect(result.startedAt).toBe('2026-05-14T09:00:00.000Z')
+  })
 })

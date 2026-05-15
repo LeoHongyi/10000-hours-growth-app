@@ -27,7 +27,11 @@ export function ActiveTimerCard() {
         <button className="secondary-button" onClick={app.pauseActiveTimer}>
           {app.activeTimer.isPaused ? '已暂停' : '暂停'}
         </button>
-        <button className="secondary-button" onClick={app.resumeActiveTimer}>
+        <button
+          className="secondary-button"
+          disabled={!app.activeTimer.isPaused}
+          onClick={app.resumeActiveTimer}
+        >
           继续
         </button>
         <button className="primary-button" onClick={() => void handleFinish()}>

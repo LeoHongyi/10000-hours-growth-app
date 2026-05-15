@@ -31,6 +31,10 @@ export function pauseTimer(timer: StoredActiveTimer, pausedAt: string): StoredAc
 }
 
 export function resumeTimer(timer: StoredActiveTimer, resumedAt: string): StoredActiveTimer {
+  if (!timer.isPaused) {
+    return timer
+  }
+
   return {
     ...timer,
     currentStartedAt: resumedAt,
