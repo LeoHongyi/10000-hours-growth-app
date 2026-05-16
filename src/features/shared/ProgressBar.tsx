@@ -1,5 +1,6 @@
 export function ProgressBar({ current, target }: { current: number; target: number }) {
-  const percent = Math.min(100, Math.round((current / target) * 100))
+  const safeTarget = Number.isFinite(target) && target > 0 ? target : 1
+  const percent = Math.min(100, Math.round((current / safeTarget) * 100))
 
   return (
     <div className="progress-root" aria-label={`进度 ${percent}%`}>

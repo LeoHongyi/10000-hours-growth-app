@@ -56,4 +56,39 @@ describe('GoalsPage', () => {
       taskTitles: ['阅读', '听力'],
     })
   })
+
+  it('blocks empty title and invalid target hours', async () => {
+    const user = userEvent.setup()
+    const onCreateGoal = vi.fn()
+
+    render(
+      <MemoryRouter>
+        <GoalsPage
+          members={members}
+          goals={goals}
+          tasks={tasks}
+          records={[]}
+          onCreateGoal={onCreateGoal}
+          onToggleGoal={vi.fn()}
+          onStartTimer={vi.fn()}
+        />
+      </MemoryRouter>,
+    )
+
+    await user.type(screen.getByLabelText('目标名称'), '   ')
+    await user.type(screen.getByLabelText('年度目标（小时）'), '0')
+    await user.click(screen.getByRole('button', { name: '新增目标' }))
+
+    expect(onCreateGoal).not.toHaveBeenCalled()
+    expect(screen.getByText('请输入目标名称')).toBeInTheDocument()
+
+    await user.clear(screen.getByLabelText('目标名称'))
+    await user.type(screen.getByLabelText('目标名称'), '雅思备考')
+    await user.clear(screen.getByLabelText('年度目标（小时）'))
+    await user.type(screen.getByLabelText('年度目标（小时）'), 'abc')
+    await user.click(screen.getByRole('button', { name: '新增目标' }))
+
+    expect(onCreateGoal).not.toHaveBeenCalled()
+    expect(screen.getByText('请输入有效的目标小时数')).toBeInTheDocument()
+  })
 })

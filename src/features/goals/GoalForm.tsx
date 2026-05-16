@@ -18,14 +18,30 @@ export function GoalForm({ members, onCreateGoal }: GoalFormProps) {
   const [title, setTitle] = useState('')
   const [targetHours, setTargetHours] = useState('')
   const [taskTitles, setTaskTitles] = useState('')
+  const [error, setError] = useState('')
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
+    const trimmedTitle = title.trim()
+    const parsedTargetHours = Number(targetHours)
+
+    if (!trimmedTitle) {
+      setError('请输入目标名称')
+      return
+    }
+
+    if (!Number.isFinite(parsedTargetHours) || parsedTargetHours <= 0) {
+      setError('请输入有效的目标小时数')
+      return
+    }
+
+    setError('')
+
     await onCreateGoal({
       memberId,
-      title: title.trim(),
-      targetHours: Number(targetHours),
+      title: trimmedTitle,
+      targetHours: parsedTargetHours,
       taskTitles: taskTitles
         .split(',')
         .map((item) => item.trim())
@@ -58,6 +74,7 @@ export function GoalForm({ members, onCreateGoal }: GoalFormProps) {
         <span>年度目标（小时）</span>
         <input
           aria-label="年度目标（小时）"
+          inputMode="numeric"
           value={targetHours}
           onChange={(event) => setTargetHours(event.target.value)}
         />
@@ -70,6 +87,7 @@ export function GoalForm({ members, onCreateGoal }: GoalFormProps) {
           onChange={(event) => setTaskTitles(event.target.value)}
         />
       </label>
+      {error ? <p className="error-text">{error}</p> : null}
       <button className="primary-button" type="submit">
         新增目标
       </button>
