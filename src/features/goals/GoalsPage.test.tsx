@@ -21,8 +21,6 @@ const goals = [
   },
 ]
 
-const tasks = [{ id: 't1', goalId: 'g1', title: '看书', sortOrder: 0 }]
-
 describe('GoalsPage', () => {
   it('creates a goal and shows remaining hours', async () => {
     const user = userEvent.setup()
@@ -33,8 +31,6 @@ describe('GoalsPage', () => {
         <GoalsPage
           members={members}
           goals={goals}
-          tasks={tasks}
-          records={[]}
           onCreateGoal={onCreateGoal}
           onToggleGoal={vi.fn()}
           onStartTimer={vi.fn()}
@@ -66,8 +62,6 @@ describe('GoalsPage', () => {
         <GoalsPage
           members={members}
           goals={goals}
-          tasks={tasks}
-          records={[]}
           onCreateGoal={onCreateGoal}
           onToggleGoal={vi.fn()}
           onStartTimer={vi.fn()}

@@ -31,7 +31,7 @@ type ManualRecordInput = {
   note: string
 }
 
-type AppContextValue = AppSnapshot & {
+export type AppContextValue = AppSnapshot & {
   hydrated: boolean
   ready: boolean
   activeTimer: StoredActiveTimer | null
@@ -159,8 +159,8 @@ export function AppProvider({ children }: PropsWithChildren) {
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>
 }
 
-export function useOptionalAppContext() {
-  return useContext(AppContext)
+export function AppProviderStub({ children, value }: PropsWithChildren<{ value: AppContextValue }>) {
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>
 }
 
 export function useAppContext() {

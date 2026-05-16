@@ -1,13 +1,11 @@
 import { Link } from 'react-router-dom'
-import type { Goal, GoalTask, Member, StudyRecord } from '../../domain/types'
+import type { Goal, Member } from '../../domain/types'
 import { ProgressBar } from '../shared/ProgressBar'
 import { GoalForm } from './GoalForm'
 
 type GoalsPageProps = {
   members: Member[]
   goals: Goal[]
-  tasks: GoalTask[]
-  records: StudyRecord[]
   onCreateGoal: (input: {
     memberId: string
     title: string
@@ -20,7 +18,7 @@ type GoalsPageProps = {
 
 const formatHours = (minutes: number) => Math.round(minutes / 60)
 
-export function GoalsPage({ members, goals, tasks, onCreateGoal, onToggleGoal, onStartTimer }: GoalsPageProps) {
+export function GoalsPage({ members, goals, onCreateGoal, onToggleGoal, onStartTimer }: GoalsPageProps) {
   return (
     <section className="stack-md">
       <GoalForm members={members} onCreateGoal={onCreateGoal} />
@@ -35,7 +33,6 @@ export function GoalsPage({ members, goals, tasks, onCreateGoal, onToggleGoal, o
 
             {memberGoals.map((goal) => {
               const remaining = Math.max(0, goal.targetMinutes - goal.completedMinutes)
-              void tasks
 
               return (
                 <article key={goal.id} className="goal-card stack-xs">

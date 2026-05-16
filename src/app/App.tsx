@@ -3,7 +3,7 @@ import { GoalDetailPage } from '../features/goals/GoalDetailPage'
 import { GoalsPage } from '../features/goals/GoalsPage'
 import { OnboardingPage } from '../features/onboarding/OnboardingPage'
 import { RecordsPage } from '../features/records/RecordsPage'
-import { AppProvider, useAppContext } from './AppProvider'
+import { AppProvider, AppProviderStub, type AppContextValue, useAppContext } from './AppProvider'
 import { AppShell } from './AppShell'
 
 type AppProps = {
@@ -34,8 +34,6 @@ function AppRoutes() {
               <GoalsPage
                 members={app.members}
                 goals={app.goals}
-                tasks={app.tasks}
-                records={app.records}
                 onCreateGoal={app.createGoal}
                 onToggleGoal={app.toggleGoal}
                 onStartTimer={app.startActiveTimer}
@@ -53,6 +51,28 @@ function AppRoutes() {
 }
 
 const noopAsync = async () => {}
+const stubAppContext: AppContextValue = {
+  members: [],
+  goals: [],
+  tasks: [],
+  records: [],
+  plans: [],
+  milestones: [],
+  diary: [],
+  hydrated: true,
+  ready: false,
+  activeTimer: null,
+  activeTimerGoalTitle: '进行中的专注',
+  initializeHousehold: noopAsync,
+  refresh: noopAsync,
+  createGoal: noopAsync,
+  toggleGoal: noopAsync,
+  addManualRecord: noopAsync,
+  startActiveTimer: () => {},
+  pauseActiveTimer: () => {},
+  resumeActiveTimer: () => {},
+  finishActiveTimer: noopAsync,
+}
 
 function AppInner({ ready, onInitialize }: AppProps) {
   const app = useAppContext()
@@ -66,29 +86,13 @@ function AppInner({ ready, onInitialize }: AppProps) {
   return <AppRoutes />
 }
 
-function AppWithoutProvider({ ready = false, onInitialize = noopAsync }: AppProps) {
-  if (!ready) {
-    return <OnboardingPage onSubmit={onInitialize} />
-  }
-
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<AppShell />}>
-          <Route index element={<PlaceholderPage title="首页" />} />
-          <Route path="/goals" element={<PlaceholderPage title="目标" />} />
-          <Route path="/records" element={<PlaceholderPage title="记录" />} />
-          <Route path="/plans" element={<PlaceholderPage title="计划" />} />
-          <Route path="/diary" element={<PlaceholderPage title="家庭日记" />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  )
-}
-
 export function App(props: AppProps) {
   if (props.ready !== undefined || props.onInitialize !== undefined) {
-    return <AppWithoutProvider {...props} />
+    return (
+      <AppProviderStub value={stubAppContext}>
+        <AppInner {...props} />
+      </AppProviderStub>
+    )
   }
 
   return (
