@@ -38,6 +38,13 @@ type AppContextValue = AppSnapshot & {
   activeTimerGoalTitle: string
   initializeHousehold: (names: string[]) => Promise<void>
   refresh: () => Promise<void>
+  createGoal: (input: {
+    memberId: string
+    title: string
+    targetHours: number
+    taskTitles: string[]
+  }) => Promise<void>
+  toggleGoal: (goalId: string) => Promise<void>
   addManualRecord: (input: ManualRecordInput) => Promise<void>
   startActiveTimer: (input: { memberId: string; goalId: string; taskId?: string }) => void
   pauseActiveTimer: () => void
@@ -79,6 +86,28 @@ export function AppProvider({ children }: PropsWithChildren) {
         await refresh()
       },
       refresh,
+      createGoal: async ({ memberId, title, targetHours, taskTitles }) => {
+        const goal = await repository.createGoal({
+          memberId,
+          title,
+          targetMinutes: targetHours * 60,
+        })
+
+        for (const taskTitle of taskTitles) {
+          await repository.createTask({ goalId: goal.id, title: taskTitle })
+        }
+
+        await refresh()
+      },
+      toggleGoal: async (goalId) => {
+        const goal = snapshot.goals.find((item) => item.id === goalId)
+        if (!goal) {
+          return
+        }
+
+        await repository.updateGoal({ ...goal, isActive: !goal.isActive })
+        await refresh()
+      },
       addManualRecord: async (input) => {
         await repository.addStudyRecord({
           ...input,
