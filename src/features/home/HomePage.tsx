@@ -37,7 +37,12 @@ export function HomePage({ weeklyMinutes, suggestions, goalPreview, onStartSugge
                 <strong>{plan.title}</strong>
                 <p>{plan.suggestedMinutes} 分钟</p>
               </div>
-              <button className="primary-button compact-button" type="button" onClick={() => onStartSuggestion(plan)}>
+              <button
+                className="primary-button"
+                style={{ width: 'auto' }}
+                type="button"
+                onClick={() => onStartSuggestion(plan)}
+              >
                 开始这条建议
               </button>
             </article>
