@@ -1,4 +1,4 @@
-import { Link, useInRouterContext } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import type { Goal, GoalTask, Member, StudyRecord } from '../../domain/types'
 import { ProgressBar } from '../shared/ProgressBar'
 import { GoalForm } from './GoalForm'
@@ -21,8 +21,6 @@ type GoalsPageProps = {
 const formatHours = (minutes: number) => Math.round(minutes / 60)
 
 export function GoalsPage({ members, goals, tasks, onCreateGoal, onToggleGoal, onStartTimer }: GoalsPageProps) {
-  const inRouterContext = useInRouterContext()
-
   return (
     <section className="stack-md">
       <GoalForm members={members} onCreateGoal={onCreateGoal} />
@@ -37,7 +35,7 @@ export function GoalsPage({ members, goals, tasks, onCreateGoal, onToggleGoal, o
 
             {memberGoals.map((goal) => {
               const remaining = Math.max(0, goal.targetMinutes - goal.completedMinutes)
-              const goalTasks = tasks.filter((task) => task.goalId === goal.id)
+              void tasks
 
               return (
                 <article key={goal.id} className="goal-card stack-xs">
@@ -62,33 +60,10 @@ export function GoalsPage({ members, goals, tasks, onCreateGoal, onToggleGoal, o
                     >
                       开始计时
                     </button>
-                    {inRouterContext ? (
-                      <Link className="text-link" to={`/goals/${goal.id}`}>
-                        查看详情
-                      </Link>
-                    ) : (
-                      <a className="text-link" href={`/goals/${goal.id}`}>
-                        查看详情
-                      </a>
-                    )}
+                    <Link className="text-link" to={`/goals/${goal.id}`}>
+                      查看详情
+                    </Link>
                   </div>
-
-                  {goalTasks.length > 0 ? (
-                    <div className="stack-xs">
-                      <strong>任务</strong>
-                      {goalTasks.map((task) => (
-                        <button
-                          key={task.id}
-                          className="ghost-button"
-                          type="button"
-                          disabled={!goal.isActive}
-                          onClick={() => onStartTimer({ memberId: member.id, goalId: goal.id, taskId: task.id })}
-                        >
-                          开始 {task.title}
-                        </button>
-                      ))}
-                    </div>
-                  ) : null}
                 </article>
               )
             })}
