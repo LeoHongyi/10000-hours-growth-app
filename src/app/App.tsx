@@ -78,6 +78,15 @@ function AppInner({ ready, onInitialize }: AppProps) {
   const app = useAppContext()
   const resolvedReady = ready ?? app.ready
   const resolvedInitialize = onInitialize ?? app.initializeHousehold
+  const hydrated = app.hydrated
+
+  if (!hydrated) {
+    return (
+      <section className="page-card">
+        <p>正在准备成长记录…</p>
+      </section>
+    )
+  }
 
   if (!resolvedReady) {
     return <OnboardingPage onSubmit={resolvedInitialize} />

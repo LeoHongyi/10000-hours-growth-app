@@ -75,12 +75,40 @@ button:disabled {
   color: #7c6750;
 }
 
+.error-text {
+  color: #b74b39;
+}
+
 .stack-xs > * + * {
   margin-top: 6px;
 }
 
 .stack-md > * + * {
   margin-top: 16px;
+}
+
+.goal-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.goal-header-row,
+.list-row,
+.button-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.secondary-button,
+.ghost-button,
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  padding: 10px 14px;
 }
 
 .primary-button {
@@ -90,6 +118,21 @@ button:disabled {
   background: #c99b6b;
   color: white;
   font-weight: 700;
+}
+
+.secondary-button {
+  background: #efe0c5;
+  color: #5a3e28;
+}
+
+.ghost-button {
+  background: transparent;
+  color: #7a6248;
+}
+
+.text-link {
+  text-decoration: none;
+  color: #8c6d45;
 }
 
 .progress-root {
