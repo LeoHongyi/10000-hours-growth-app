@@ -1,5 +1,6 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from 'react'
-import type { AppSnapshot } from '../domain/types'
+import type { AppSnapshot, PlanItem } from '../domain/types'
+import { buildDailySuggestions } from '../domain/suggestions'
 import {
   finishTimer,
   loadActiveTimer,
@@ -50,9 +51,18 @@ export type AppContextValue = AppSnapshot & {
   pauseActiveTimer: () => void
   resumeActiveTimer: () => void
   finishActiveTimer: (note: string) => Promise<void>
+  todaySuggestions: PlanItem[]
+  weeklyMinutes: number
 }
 
 const AppContext = createContext<AppContextValue | null>(null)
+
+function startOfWeekKey(nowDate = new Date()) {
+  const date = new Date(nowDate)
+  date.setHours(0, 0, 0, 0)
+  date.setDate(date.getDate() - date.getDay())
+  return date.toISOString().slice(0, 10)
+}
 
 export function AppProvider({ children }: PropsWithChildren) {
   const [snapshot, setSnapshot] = useState<AppSnapshot>(emptySnapshot)
@@ -68,13 +78,50 @@ export function AppProvider({ children }: PropsWithChildren) {
     void refresh()
   }, [])
 
+  useEffect(() => {
+    if (!hydrated || snapshot.members.length !== 2) {
+      return
+    }
+
+    const ensureTodaySuggestions = async () => {
+      const today = new Date().toISOString().slice(0, 10)
+      const hasTodayPlans = snapshot.plans.some((plan) => plan.date === today)
+
+      if (hasTodayPlans || snapshot.goals.length === 0) {
+        return
+      }
+
+      const generated = buildDailySuggestions({
+        date: today,
+        members: snapshot.members,
+        goals: snapshot.goals,
+        tasks: snapshot.tasks,
+        records: snapshot.records,
+      })
+
+      if (generated.length === 0) {
+        return
+      }
+
+      await repository.savePlans(generated)
+      await refresh()
+    }
+
+    void ensureTodaySuggestions()
+  }, [hydrated, snapshot])
+
   const persistTimer = (timer: StoredActiveTimer | null) => {
     setActiveTimer(timer)
     saveActiveTimer(timer)
   }
 
-  const value = useMemo<AppContextValue>(
-    () => ({
+  const value = useMemo<AppContextValue>(() => {
+    const today = new Date().toISOString().slice(0, 10)
+    const weeklyMinutes = snapshot.records
+      .filter((record) => record.date >= startOfWeekKey())
+      .reduce((sum, record) => sum + record.durationMinutes, 0)
+
+    return {
       ...snapshot,
       hydrated,
       ready: snapshot.members.length === 2,
@@ -152,9 +199,10 @@ export function AppProvider({ children }: PropsWithChildren) {
         persistTimer(null)
         await refresh()
       },
-    }),
-    [activeTimer, hydrated, snapshot],
-  )
+      todaySuggestions: snapshot.plans.filter((plan) => plan.date === today),
+      weeklyMinutes,
+    }
+  }, [activeTimer, hydrated, snapshot])
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>
 }

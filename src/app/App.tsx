@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { GoalDetailPage } from '../features/goals/GoalDetailPage'
 import { GoalsPage } from '../features/goals/GoalsPage'
+import { HomePage } from '../features/home/HomePage'
 import { OnboardingPage } from '../features/onboarding/OnboardingPage'
 import { RecordsPage } from '../features/records/RecordsPage'
 import { AppProvider, AppProviderStub, type AppContextValue, useAppContext } from './AppProvider'
@@ -27,7 +28,23 @@ function AppRoutes() {
     <BrowserRouter>
       <Routes>
         <Route element={<AppShell />}>
-          <Route index element={<PlaceholderPage title="首页" />} />
+          <Route
+            index
+            element={
+              <HomePage
+                weeklyMinutes={app.weeklyMinutes}
+                suggestions={app.todaySuggestions}
+                goalPreview={app.goals.slice(0, 2)}
+                onStartSuggestion={(plan) =>
+                  app.startActiveTimer({
+                    memberId: plan.memberId,
+                    goalId: plan.goalId,
+                    taskId: plan.taskId,
+                  })
+                }
+              />
+            }
+          />
           <Route
             path="/goals"
             element={
@@ -72,6 +89,8 @@ const stubAppContext: AppContextValue = {
   pauseActiveTimer: () => {},
   resumeActiveTimer: () => {},
   finishActiveTimer: noopAsync,
+  todaySuggestions: [],
+  weeklyMinutes: 0,
 }
 
 function AppInner({ ready, onInitialize }: AppProps) {
