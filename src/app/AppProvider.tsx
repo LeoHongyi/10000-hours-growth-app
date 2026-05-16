@@ -51,6 +51,7 @@ export type AppContextValue = AppSnapshot & {
   pauseActiveTimer: () => void
   resumeActiveTimer: () => void
   finishActiveTimer: (note: string) => Promise<void>
+  ensureTodaySuggestions: () => Promise<void>
   todaySuggestions: PlanItem[]
   weeklyMinutes: number
 }
@@ -74,6 +75,30 @@ export function AppProvider({ children }: PropsWithChildren) {
     setHydrated(true)
   }
 
+  const ensureTodaySuggestions = async () => {
+    const today = new Date().toISOString().slice(0, 10)
+    const hasTodayPlans = snapshot.plans.some((plan) => plan.date === today)
+
+    if (hasTodayPlans || snapshot.goals.length === 0) {
+      return
+    }
+
+    const generated = buildDailySuggestions({
+      date: today,
+      members: snapshot.members,
+      goals: snapshot.goals,
+      tasks: snapshot.tasks,
+      records: snapshot.records,
+    })
+
+    if (generated.length === 0) {
+      return
+    }
+
+    await repository.savePlans(generated)
+    await refresh()
+  }
+
   useEffect(() => {
     void refresh()
   }, [])
@@ -81,30 +106,6 @@ export function AppProvider({ children }: PropsWithChildren) {
   useEffect(() => {
     if (!hydrated || snapshot.members.length !== 2) {
       return
-    }
-
-    const ensureTodaySuggestions = async () => {
-      const today = new Date().toISOString().slice(0, 10)
-      const hasTodayPlans = snapshot.plans.some((plan) => plan.date === today)
-
-      if (hasTodayPlans || snapshot.goals.length === 0) {
-        return
-      }
-
-      const generated = buildDailySuggestions({
-        date: today,
-        members: snapshot.members,
-        goals: snapshot.goals,
-        tasks: snapshot.tasks,
-        records: snapshot.records,
-      })
-
-      if (generated.length === 0) {
-        return
-      }
-
-      await repository.savePlans(generated)
-      await refresh()
     }
 
     void ensureTodaySuggestions()
@@ -199,6 +200,7 @@ export function AppProvider({ children }: PropsWithChildren) {
         persistTimer(null)
         await refresh()
       },
+      ensureTodaySuggestions,
       todaySuggestions: snapshot.plans.filter((plan) => plan.date === today),
       weeklyMinutes,
     }

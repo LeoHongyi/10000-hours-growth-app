@@ -103,7 +103,8 @@ button:disabled {
 
 .secondary-button,
 .ghost-button,
-.text-link {
+.text-link,
+.compact-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -118,6 +119,10 @@ button:disabled {
   background: #c99b6b;
   color: white;
   font-weight: 700;
+}
+
+.compact-button {
+  width: auto;
 }
 
 .secondary-button {

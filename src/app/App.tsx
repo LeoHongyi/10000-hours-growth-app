@@ -89,6 +89,7 @@ const stubAppContext: AppContextValue = {
   pauseActiveTimer: () => {},
   resumeActiveTimer: () => {},
   finishActiveTimer: noopAsync,
+  ensureTodaySuggestions: noopAsync,
   todaySuggestions: [],
   weeklyMinutes: 0,
 }
