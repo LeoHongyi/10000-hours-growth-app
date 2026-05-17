@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
 import { HomePage } from './HomePage'
 
@@ -23,9 +24,14 @@ const props = {
 
 describe('HomePage', () => {
   it('shows weekly family time and a quick start button', () => {
-    render(<HomePage {...props} />)
+    render(
+      <MemoryRouter>
+        <HomePage {...props} />
+      </MemoryRouter>,
+    )
 
     expect(screen.getByText('本周家庭投入 2h 40m')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '开始这条建议' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: '去家庭日记' })).toHaveAttribute('href', '/diary')
   })
 })

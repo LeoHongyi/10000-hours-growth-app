@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import type { PlanItem } from '../../domain/types'
 import { ProgressBar } from '../shared/ProgressBar'
 
@@ -64,6 +65,9 @@ export function HomePage({ weeklyMinutes, suggestions, goalPreview, onStartSugge
       <section className="page-card stack-xs">
         <h2>宝宝成长记录</h2>
         <p className="muted">顺手记下一张照片和一句今天的小变化。</p>
+        <Link className="text-link" to="/diary">
+          去家庭日记
+        </Link>
       </section>
     </section>
   )

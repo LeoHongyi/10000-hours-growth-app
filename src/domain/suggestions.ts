@@ -10,13 +10,19 @@ function daysSince(lastDate: string | undefined, today: string) {
   return Math.max(0, Math.round((Date.parse(today) - Date.parse(lastDate)) / 86400000))
 }
 
-export function buildDailySuggestions(input: {
+function toDateKey(baseDate: string, daysLater: number) {
+  const date = new Date(baseDate)
+  date.setDate(date.getDate() + daysLater)
+  return date.toISOString().slice(0, 10)
+}
+
+function buildScoredPlans(input: {
   date: string
   members: Member[]
   goals: Goal[]
   tasks: GoalTask[]
   records: StudyRecord[]
-}): PlanItem[] {
+}) {
   const { date, members, goals, tasks, records } = input
 
   return goals
@@ -46,6 +52,32 @@ export function buildDailySuggestions(input: {
       }
     })
     .sort((a, b) => b.score - a.score)
+}
+
+export function buildDailySuggestions(input: {
+  date: string
+  members: Member[]
+  goals: Goal[]
+  tasks: GoalTask[]
+  records: StudyRecord[]
+}): PlanItem[] {
+  return buildScoredPlans(input)
     .slice(0, 3)
     .map(({ score, ...plan }) => plan)
+}
+
+export function buildWeeklyFrameworkSuggestions(input: {
+  date: string
+  members: Member[]
+  goals: Goal[]
+  tasks: GoalTask[]
+  records: StudyRecord[]
+}): PlanItem[] {
+  return buildScoredPlans(input)
+    .slice(0, 5)
+    .map(({ score, ...plan }, index) => ({
+      ...plan,
+      date: toDateKey(input.date, index + 1),
+      suggestedMinutes: Math.max(20, Math.round(plan.suggestedMinutes * 0.8)),
+    }))
 }

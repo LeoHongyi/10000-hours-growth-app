@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildDailySuggestions } from './suggestions'
+import { buildDailySuggestions, buildWeeklyFrameworkSuggestions } from './suggestions'
 
 const members = [
   { id: 'm1', name: '妈妈', avatarColor: '#E8C8A1', sortOrder: 0 },
@@ -69,5 +69,22 @@ describe('buildDailySuggestions', () => {
 
     expect(suggestions[0].goalId).toBe('g2')
     expect(suggestions[0].suggestedMinutes).toBeGreaterThan(0)
+  })
+})
+
+describe('buildWeeklyFrameworkSuggestions', () => {
+  it('creates upcoming-week suggestions with dates after today', () => {
+    const suggestions = buildWeeklyFrameworkSuggestions({
+      date: '2026-05-16',
+      members,
+      goals,
+      tasks,
+      records,
+    })
+
+    expect(suggestions).toHaveLength(2)
+    expect(suggestions[0].date).toBe('2026-05-17')
+    expect(suggestions[1].date).toBe('2026-05-18')
+    expect(suggestions.every((plan) => plan.date > '2026-05-16')).toBe(true)
   })
 })

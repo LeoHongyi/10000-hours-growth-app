@@ -1,6 +1,8 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from 'react'
-import type { AppSnapshot, PlanItem } from '../domain/types'
-import { buildDailySuggestions } from '../domain/suggestions'
+import type { AppSnapshot, MilestoneRecord, PlanItem, PlanStatus } from '../domain/types'
+import { getNewMilestone } from '../domain/milestones'
+import { buildDailySuggestions, buildWeeklyFrameworkSuggestions } from '../domain/suggestions'
+import { compressImage } from '../features/diary/image'
 import {
   finishTimer,
   loadActiveTimer,
@@ -53,7 +55,14 @@ export type AppContextValue = AppSnapshot & {
   finishActiveTimer: (note: string) => Promise<void>
   ensureTodaySuggestions: () => Promise<void>
   todaySuggestions: PlanItem[]
+  weeklyFramework: PlanItem[]
+  changePlanStatus: (planId: string, status: PlanStatus) => Promise<void>
+  replacePlan: (planId: string) => Promise<void>
   weeklyMinutes: number
+  monthlyMinutes: number
+  activeMilestone: MilestoneRecord | null
+  closeMilestone: () => void
+  createDiaryEntry: (input: { date: string; note: string; photo?: File }) => Promise<void>
 }
 
 const AppContext = createContext<AppContextValue | null>(null)
@@ -65,10 +74,17 @@ function startOfWeekKey(nowDate = new Date()) {
   return date.toISOString().slice(0, 10)
 }
 
+function addDaysKey(baseDate: string, days: number) {
+  const date = new Date(baseDate)
+  date.setDate(date.getDate() + days)
+  return date.toISOString().slice(0, 10)
+}
+
 export function AppProvider({ children }: PropsWithChildren) {
   const [snapshot, setSnapshot] = useState<AppSnapshot>(emptySnapshot)
   const [hydrated, setHydrated] = useState(false)
   const [activeTimer, setActiveTimer] = useState<StoredActiveTimer | null>(() => loadActiveTimer())
+  const [activeMilestone, setActiveMilestone] = useState<MilestoneRecord | null>(null)
 
   const refresh = async () => {
     setSnapshot(await repository.getSnapshot())
@@ -77,25 +93,39 @@ export function AppProvider({ children }: PropsWithChildren) {
 
   const ensureTodaySuggestions = async () => {
     const today = new Date().toISOString().slice(0, 10)
+    const weekEnd = addDaysKey(today, 7)
     const hasTodayPlans = snapshot.plans.some((plan) => plan.date === today)
+    const hasWeeklyFramework = snapshot.plans.some((plan) => plan.date > today && plan.date <= weekEnd)
 
-    if (hasTodayPlans || snapshot.goals.length === 0) {
+    if (snapshot.goals.length === 0) {
       return
     }
 
-    const generated = buildDailySuggestions({
-      date: today,
-      members: snapshot.members,
-      goals: snapshot.goals,
-      tasks: snapshot.tasks,
-      records: snapshot.records,
-    })
+    const generatedToday = hasTodayPlans
+      ? []
+      : buildDailySuggestions({
+          date: today,
+          members: snapshot.members,
+          goals: snapshot.goals,
+          tasks: snapshot.tasks,
+          records: snapshot.records,
+        })
 
-    if (generated.length === 0) {
+    const generatedWeekly = hasWeeklyFramework
+      ? []
+      : buildWeeklyFrameworkSuggestions({
+          date: today,
+          members: snapshot.members,
+          goals: snapshot.goals,
+          tasks: snapshot.tasks,
+          records: snapshot.records,
+        })
+
+    if (generatedToday.length === 0 && generatedWeekly.length === 0) {
       return
     }
 
-    await repository.savePlans(generated)
+    await repository.savePlans([...generatedToday, ...generatedWeekly])
     await refresh()
   }
 
@@ -116,10 +146,29 @@ export function AppProvider({ children }: PropsWithChildren) {
     saveActiveTimer(timer)
   }
 
+  const maybeCelebrate = async (goalId: string, previousMinutes: number, nextMinutes: number) => {
+    const reachedHours = snapshot.milestones
+      .filter((item) => item.goalId === goalId)
+      .map((item) => item.milestoneHours)
+    const milestone = getNewMilestone({ goalId, previousMinutes, nextMinutes, reachedHours })
+
+    if (!milestone) {
+      return
+    }
+
+    await repository.saveMilestone(milestone)
+    setActiveMilestone(milestone)
+  }
+
   const value = useMemo<AppContextValue>(() => {
     const today = new Date().toISOString().slice(0, 10)
+    const weekEnd = addDaysKey(today, 7)
+    const currentMonth = today.slice(0, 7)
     const weeklyMinutes = snapshot.records
       .filter((record) => record.date >= startOfWeekKey())
+      .reduce((sum, record) => sum + record.durationMinutes, 0)
+    const monthlyMinutes = snapshot.records
+      .filter((record) => record.date.slice(0, 7) === currentMonth)
       .reduce((sum, record) => sum + record.durationMinutes, 0)
 
     return {
@@ -157,12 +206,14 @@ export function AppProvider({ children }: PropsWithChildren) {
         await refresh()
       },
       addManualRecord: async (input) => {
+        const previousMinutes = snapshot.goals.find((goal) => goal.id === input.goalId)?.completedMinutes ?? 0
         await repository.addStudyRecord({
           ...input,
           startTime: undefined,
           endTime: undefined,
           isManualEntry: true,
         })
+        await maybeCelebrate(input.goalId, previousMinutes, previousMinutes + input.durationMinutes)
         await refresh()
       },
       startActiveTimer: (input) => {
@@ -185,6 +236,7 @@ export function AppProvider({ children }: PropsWithChildren) {
           return
         }
 
+        const previousMinutes = snapshot.goals.find((goal) => goal.id === activeTimer.goalId)?.completedMinutes ?? 0
         const result = finishTimer(activeTimer, new Date().toISOString())
         await repository.addStudyRecord({
           memberId: activeTimer.memberId,
@@ -197,14 +249,70 @@ export function AppProvider({ children }: PropsWithChildren) {
           note: note.trim(),
           isManualEntry: false,
         })
+        await maybeCelebrate(activeTimer.goalId, previousMinutes, previousMinutes + result.durationMinutes)
         persistTimer(null)
         await refresh()
       },
       ensureTodaySuggestions,
-      todaySuggestions: snapshot.plans.filter((plan) => plan.date === today),
+      todaySuggestions: snapshot.plans.filter((plan) => plan.date === today && plan.status === 'pending'),
+      weeklyFramework: snapshot.plans
+        .filter((plan) => plan.date > today && plan.date <= weekEnd)
+        .sort((a, b) => a.date.localeCompare(b.date) || a.title.localeCompare(b.title)),
+      changePlanStatus: async (planId, status) => {
+        const plan = snapshot.plans.find((item) => item.id === planId)
+        if (!plan) {
+          return
+        }
+
+        await repository.savePlans([{ ...plan, status }])
+        await refresh()
+      },
+      replacePlan: async (planId) => {
+        const target = snapshot.plans.find((plan) => plan.id === planId)
+        if (!target) {
+          return
+        }
+
+        const replacement = buildDailySuggestions({
+          date: target.date,
+          members: snapshot.members,
+          goals: snapshot.goals.filter((goal) => goal.id !== target.goalId),
+          tasks: snapshot.tasks,
+          records: snapshot.records,
+        })[0]
+
+        if (!replacement) {
+          return
+        }
+
+        await repository.savePlans([
+          { ...target, status: 'replaced' },
+          { ...replacement, date: target.date },
+        ])
+        await refresh()
+      },
       weeklyMinutes,
+      monthlyMinutes,
+      activeMilestone,
+      closeMilestone: () => setActiveMilestone(null),
+      createDiaryEntry: async ({ date, note, photo }) => {
+        let photoData: string | undefined
+
+        if (photo) {
+          photoData = await compressImage(photo)
+        }
+
+        await repository.saveDiaryEntry({
+          id: crypto.randomUUID(),
+          date,
+          note: note.trim(),
+          photo: photoData,
+          createdAt: new Date().toISOString(),
+        })
+        await refresh()
+      },
     }
-  }, [activeTimer, hydrated, snapshot])
+  }, [activeMilestone, activeTimer, hydrated, snapshot])
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>
 }
