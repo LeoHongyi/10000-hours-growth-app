@@ -38,7 +38,7 @@ describe('GoalsPage', () => {
       </MemoryRouter>,
     )
 
-    expect(screen.getByText('已学习 3h，剩余 497h')).toBeInTheDocument()
+    expect(screen.getByText('已学习 3小时，剩余 497小时')).toBeInTheDocument()
 
     await user.type(screen.getByLabelText('目标名称'), '雅思备考')
     await user.type(screen.getByLabelText('年度目标（小时）'), '300')

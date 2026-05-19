@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Add New Record - 10,000 Hours Growth</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#f9f3ea",
+                        "inverse-primary": "#ffb785",
+                        "outline": "#857469",
+                        "tertiary": "#4a6545",
+                        "surface-tint": "#8a5024",
+                        "on-tertiary-fixed-variant": "#334d2f",
+                        "tertiary-fixed-dim": "#b1cfa7",
+                        "on-primary-container": "#794318",
+                        "surface-container-lowest": "#ffffff",
+                        "on-background": "#1d1b16",
+                        "on-tertiary": "#ffffff",
+                        "secondary-container": "#fdd73b",
+                        "inverse-on-surface": "#f6f0e7",
+                        "on-error": "#ffffff",
+                        "surface": "#fff9f0",
+                        "on-primary-fixed-variant": "#6d390e",
+                        "on-tertiary-fixed": "#082007",
+                        "on-secondary-fixed": "#221b00",
+                        "primary": "#8a5024",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed-variant": "#554500",
+                        "surface-container": "#f3ede4",
+                        "surface-container-high": "#ede7df",
+                        "on-primary-fixed": "#301400",
+                        "secondary-fixed": "#ffe173",
+                        "error-container": "#ffdad6",
+                        "surface-variant": "#e7e2d9",
+                        "on-secondary-container": "#715d00",
+                        "surface-bright": "#fff9f0",
+                        "inverse-surface": "#32302a",
+                        "secondary": "#705d00",
+                        "on-surface-variant": "#52443b",
+                        "primary-container": "#ffb37e",
+                        "surface-dim": "#dfd9d1",
+                        "primary-fixed": "#ffdcc6",
+                        "tertiary-fixed": "#ccebc2",
+                        "outline-variant": "#d7c2b6",
+                        "error": "#ba1a1a",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-container": "#3d5738",
+                        "on-surface": "#1d1b16",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#aecca5",
+                        "primary-fixed-dim": "#ffb785",
+                        "background": "#fff9f0",
+                        "surface-container-highest": "#e7e2d9",
+                        "secondary-fixed-dim": "#e8c426"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "8px",
+                        "section-gap": "48px",
+                        "container-padding-desktop": "40px",
+                        "gutter": "16px",
+                        "container-padding-mobile": "20px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Quicksand"],
+                        "headline-md": ["Quicksand"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Quicksand"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["13px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["26px", {"lineHeight": "1.2", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #fff9f0;
+            color: #1d1b16;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .journal-texture {
+            background-image: radial-gradient(#e7e2d9 0.5px, transparent 0.5px);
+            background-size: 24px 24px;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .sun-shadow {
+            box-shadow: 0 20px 40px -15px rgba(181,141,103,0.15);
+        }
+        .inner-well {
+            box-shadow: inset 0 2px 4px rgba(181,141,103,0.1);
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #ffb37e;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body-md text-body-md min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface fixed top-0 w-full z-50 shadow-[0_20px_40px_-15px_rgba(181,141,103,0.08)]">
+<div class="flex justify-between items-center w-full px-container-mobile py-unit md:px-container-desktop max-w-[1200px] mx-auto">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container">
+<img alt="User" class="w-full h-full object-cover" data-alt="A warm, close-up portrait of a smiling woman with soft lighting, set against a blurred outdoor garden background. The image has a gentle, sun-drenched aesthetic with warm amber and peach tones, perfectly aligning with a nurturing and personal growth brand identity. High-key lighting creates a soft, inviting atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDlGBtmql0z6bsDCaTn8tjU8cRP0OokehDBDntt60H5j9dzCv26ppPFqdvdn0v3LgdblGhYMXd3-XNZYOTlHpNseDpyRyP6_UZLfHSw5TRUvScWN96IMQ25TU4DGS8a-OUzduo61wlOBcw5bKRAbB4MoHhoy-lPJ059NjQAJgLuges2044lEtjU5CtQv1czudXvPmfYb8DTkquSVdKf65Dp5Ad15uzMK6X15gZ78ptnz0WNFdwsQJG94I1RTWJynVWbqoworLein8Rz"/>
+</div>
+<h1 class="font-headline-md text-headline-md-mobile md:text-headline-md text-primary">Add New Record</h1>
+</div>
+<button class="material-symbols-outlined text-primary hover:scale-[1.02] transition-transform duration-300 active:scale-95" data-icon="settings">settings</button>
+</div>
+</header>
+<main class="flex-grow pt-24 pb-32 px-container-mobile md:px-container-desktop max-w-[800px] mx-auto w-full">
+<!-- Journal Page Container -->
+<div class="bg-surface-container-lowest rounded-lg p-8 md:p-12 sun-shadow journal-texture relative overflow-hidden">
+<!-- Decorative Accent -->
+<div class="absolute top-0 right-0 w-32 h-32 bg-secondary-container/10 rounded-full -mr-16 -mt-16 blur-3xl"></div>
+<form class="space-y-section-gap relative z-10">
+<!-- Goal Selection -->
+<div class="space-y-4">
+<label class="font-headline-md text-primary flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="target">target</span>
+                        Choose a Goal
+                    </label>
+<div class="relative">
+<select class="w-full appearance-none bg-surface-container-low border-none rounded-DEFAULT p-4 pr-12 text-body-lg font-body-lg inner-well text-on-surface-variant cursor-pointer transition-all hover:bg-surface-container">
+<option value="montessori">Montessori Teaching</option>
+<option value="ielts">IELTS Preparation</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-outline" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<!-- Time Input Section -->
+<div class="space-y-4">
+<label class="font-headline-md text-primary flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="schedule">schedule</span>
+                        Time Invested
+                    </label>
+<div class="grid grid-cols-2 gap-gutter">
+<div class="space-y-2">
+<div class="relative flex items-center">
+<input class="w-full bg-surface-container-low border-none rounded-xl p-6 text-center text-[40px] font-headline-lg inner-well focus:ring-2 focus:ring-primary-container transition-all" max="23" min="0" placeholder="00" type="number"/>
+<span class="absolute right-4 font-label-sm text-outline uppercase tracking-widest">Hrs</span>
+</div>
+</div>
+<div class="space-y-2">
+<div class="relative flex items-center">
+<input class="w-full bg-surface-container-low border-none rounded-xl p-6 text-center text-[40px] font-headline-lg inner-well focus:ring-2 focus:ring-primary-container transition-all" max="59" min="0" placeholder="00" type="number"/>
+<span class="absolute right-4 font-label-sm text-outline uppercase tracking-widest">Min</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Insights Area -->
+<div class="space-y-4">
+<label class="font-headline-md text-primary flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="auto_stories">auto_stories</span>
+                        What did you learn today?
+                    </label>
+<textarea class="w-full bg-surface-container-low border-none rounded-lg p-6 text-body-lg font-body-lg inner-well focus:ring-2 focus:ring-primary-container transition-all resize-none leading-relaxed" placeholder="Share your insights..." rows="5"></textarea>
+</div>
+<!-- Media Section -->
+<div class="flex flex-wrap gap-4 pt-4">
+<button class="flex items-center gap-2 px-6 py-4 bg-surface-container-high rounded-full text-on-surface-variant font-label-sm hover:scale-[1.02] transition-transform active:scale-95" type="button">
+<span class="material-symbols-outlined" data-icon="add_a_photo">add_a_photo</span>
+                        Add a photo
+                    </button>
+<div class="flex items-center gap-2 px-4 py-2 bg-tertiary-fixed text-on-tertiary-container rounded-full text-label-sm animate-pulse">
+<span class="material-symbols-outlined" data-icon="auto_awesome">auto_awesome</span>
+                        Baby moment detected
+                    </div>
+</div>
+<!-- Action Button -->
+<div class="pt-8">
+<button class="w-full bg-tertiary text-on-tertiary font-headline-md py-6 rounded-full sun-shadow hover:scale-[1.02] transition-all duration-300 active:scale-95 flex justify-center items-center gap-3" type="submit">
+                        Save Record
+                        <span class="material-symbols-outlined" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</button>
+</div>
+</form>
+<!-- Decorative Milestone Sticker (Hidden by default, used for interaction) -->
+<div class="hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 pointer-events-none" id="milestone-sticker">
+<div class="bg-white border-[6px] border-white rounded-full p-8 sun-shadow rotate-12 flex flex-col items-center">
+<span class="material-symbols-outlined text-secondary text-[64px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<p class="font-headline-md text-primary mt-2">Amazing!</p>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-4 pt-2 bg-surface-container-lowest dark:bg-surface-container shadow-[0_-10px_30px_rgba(181,141,103,0.1)] z-50 rounded-t-lg">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors active:scale-90 px-4 py-1" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors active:scale-90 px-4 py-1" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-label-sm text-label-sm">Goals</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-xl px-4 py-1 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="edit_note" style="font-variation-settings: 'FILL' 1;">edit_note</span>
+<span class="font-label-sm text-label-sm">Records</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors active:scale-90 px-4 py-1" href="#">
+<span class="material-symbols-outlined" data-icon="auto_stories">auto_stories</span>
+<span class="font-label-sm text-label-sm">Diary</span>
+</a>
+</nav>
+<script>
+        // Simple micro-interaction for the Save button
+        document.querySelector('form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const sticker = document.getElementById('milestone-sticker');
+            sticker.classList.remove('hidden');
+            sticker.classList.add('animate-bounce');
+            
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.innerHTML = 'Saved!';
+            btn.classList.replace('bg-tertiary', 'bg-tertiary-fixed-dim');
+            btn.classList.add('pointer-events-none');
+
+            setTimeout(() => {
+                sticker.classList.add('hidden');
+                sticker.classList.remove('animate-bounce');
+            }, 3000);
+        });
+
+        // Numeric input constraints
+        const inputs = document.querySelectorAll('input[type="number"]');
+        inputs.forEach(input => {
+            input.addEventListener('input', () => {
+                if (input.value.length > 2) input.value = input.value.slice(0, 2);
+            });
+        });
+    </script>
+</body></html>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>10,000 Hours Growth</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .sun-shadow {
+            box-shadow: 0 20px 40px -15px rgba(181, 141, 103, 0.12);
+        }
+        .pebble-step {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        body {
+            background-color: #fff9f0; /* Manual fallback for safety */
+        }
+        .recessed-input {
+            box-shadow: inset 0 2px 4px rgba(133, 116, 105, 0.08);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-low": "#f9f3ea",
+                      "inverse-primary": "#ffb785",
+                      "outline": "#857469",
+                      "tertiary": "#4a6545",
+                      "surface-tint": "#8a5024",
+                      "on-tertiary-fixed-variant": "#334d2f",
+                      "tertiary-fixed-dim": "#b1cfa7",
+                      "on-primary-container": "#794318",
+                      "surface-container-lowest": "#ffffff",
+                      "on-background": "#1d1b16",
+                      "on-tertiary": "#ffffff",
+                      "secondary-container": "#fdd73b",
+                      "inverse-on-surface": "#f6f0e7",
+                      "on-error": "#ffffff",
+                      "surface": "#fff9f0",
+                      "on-primary-fixed-variant": "#6d390e",
+                      "on-tertiary-fixed": "#082007",
+                      "on-secondary-fixed": "#221b00",
+                      "primary": "#8a5024",
+                      "on-primary": "#ffffff",
+                      "on-secondary-fixed-variant": "#554500",
+                      "surface-container": "#f3ede4",
+                      "surface-container-high": "#ede7df",
+                      "on-primary-fixed": "#301400",
+                      "secondary-fixed": "#ffe173",
+                      "error-container": "#ffdad6",
+                      "surface-variant": "#e7e2d9",
+                      "on-secondary-container": "#715d00",
+                      "surface-bright": "#fff9f0",
+                      "inverse-surface": "#32302a",
+                      "secondary": "#705d00",
+                      "on-surface-variant": "#52443b",
+                      "primary-container": "#ffb37e",
+                      "surface-dim": "#dfd9d1",
+                      "primary-fixed": "#ffdcc6",
+                      "tertiary-fixed": "#ccebc2",
+                      "outline-variant": "#d7c2b6",
+                      "error": "#ba1a1a",
+                      "on-error-container": "#93000a",
+                      "on-tertiary-container": "#3d5738",
+                      "on-surface": "#1d1b16",
+                      "on-secondary": "#ffffff",
+                      "tertiary-container": "#aecca5",
+                      "primary-fixed-dim": "#ffb785",
+                      "background": "#fff9f0",
+                      "surface-container-highest": "#e7e2d9",
+                      "secondary-fixed-dim": "#e8c426"
+              },
+              "borderRadius": {
+                      "DEFAULT": "1rem",
+                      "lg": "2rem",
+                      "xl": "3rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "unit": "8px",
+                      "section-gap": "48px",
+                      "container-padding-desktop": "40px",
+                      "gutter": "16px",
+                      "container-padding-mobile": "20px"
+              },
+              "fontFamily": {
+                      "label-sm": ["Plus Jakarta Sans"],
+                      "body-md": ["Plus Jakarta Sans"],
+                      "headline-lg": ["Quicksand"],
+                      "headline-md": ["Quicksand"],
+                      "body-lg": ["Plus Jakarta Sans"],
+                      "headline-lg-mobile": ["Quicksand"]
+              },
+              "fontSize": {
+                      "label-sm": ["13px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                      "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "headline-lg-mobile": ["26px", {"lineHeight": "1.2", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface selection:bg-primary-container selection:text-on-primary-container min-h-screen pb-32">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-40 bg-surface/80 backdrop-blur-md">
+<nav class="flex justify-between items-center w-full px-container-mobile py-4 md:px-container-desktop max-w-[1200px] mx-auto">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full overflow-hidden sun-shadow border-2 border-white">
+<img alt="User profile picture" class="w-full h-full object-cover" data-alt="A warm, close-up portrait of a smiling woman with a gentle expression, set against a soft-focus garden background. The lighting is golden hour, casting a soft amber glow that matches a light-mode UI palette of creams and peaches. The overall mood is peaceful, nurturing, and professional." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7tFu9YAQdFi0vrBPtF50p8aD08KzmKLH-gBurjtWjVd6hV1WES33RJXWkMJyU1wS-bKIuKiJUz6rTC_3MLu1PbRwNe2ux_auJY_cpmytPM5H7RDNG9CpeWI8j-BkKAbmX1qf0Ww-a2GJZrGJXjGedBHvbYW3ibw2jjFBG6F3tHSgX0VljjeEDyxJgMV3PWx9bpuSJ0g8OG5XjiExkFN-IgK0RUNuZWRGf370l0809tGOI6B8Vs56SPaVvZl2bfVy-xB69pX4Q539k"/>
+</div>
+<div class="flex flex-col">
+<h1 class="font-headline-md text-headline-md-mobile md:text-headline-md text-primary">Good morning, Mom</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Your growth garden is blooming today.</p>
+</div>
+</div>
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors active:scale-90 duration-300">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</nav>
+</header>
+<main class="max-w-[1200px] mx-auto px-container-mobile md:px-container-desktop pt-unit">
+<!-- Today's Focus Card -->
+<section class="mt-8">
+<div class="bg-surface-container-lowest rounded-lg p-8 sun-shadow border border-surface-container relative overflow-hidden">
+<!-- Atmospheric background element -->
+<div class="absolute -top-12 -right-12 w-48 h-48 bg-primary-container/20 rounded-full blur-3xl"></div>
+<div class="flex flex-col md:flex-row items-center md:items-start gap-8 relative z-10">
+<!-- Timer Component -->
+<div class="flex flex-col items-center">
+<button class="w-40 h-40 rounded-full bg-primary-container text-on-primary-container sun-shadow flex flex-col items-center justify-center gap-1 hover:scale-[1.03] active:scale-95 transition-all duration-300 group" id="startTimer">
+<span class="material-symbols-outlined text-4xl group-hover:rotate-12 transition-transform">play_arrow</span>
+<span class="font-headline-md text-headline-md">Start</span>
+<span class="font-label-sm text-[10px] uppercase tracking-widest opacity-80">Timer</span>
+</button>
+<div class="mt-6 text-center">
+<p class="font-label-sm text-label-sm text-on-surface-variant">Today's Focus</p>
+<h2 class="font-headline-md text-headline-md text-primary">IELTS Practice</h2>
+</div>
+</div>
+<!-- Daily Plan Checklist -->
+<div class="flex-1 w-full">
+<h3 class="font-headline-md text-headline-md mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary">potted_plant</span>
+                            Daily Plan
+                        </h3>
+<div class="space-y-3">
+<label class="flex items-center gap-4 p-4 rounded-xl bg-surface-container-low cursor-pointer hover:bg-surface-container transition-colors group">
+<input class="w-6 h-6 rounded-lg border-outline-variant text-primary focus:ring-primary-container bg-surface cursor-pointer" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface group-has-[:checked]:line-through group-has-[:checked]:opacity-50">Read Montessori Ch.3</span>
+</label>
+<label class="flex items-center gap-4 p-4 rounded-xl bg-surface-container-low cursor-pointer hover:bg-surface-container transition-colors group">
+<input class="w-6 h-6 rounded-lg border-outline-variant text-primary focus:ring-primary-container bg-surface cursor-pointer" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface group-has-[:checked]:line-through group-has-[:checked]:opacity-50">IELTS Listening Practice</span>
+</label>
+<label class="flex items-center gap-4 p-4 rounded-xl bg-surface-container-low cursor-pointer hover:bg-surface-container transition-colors group">
+<input class="w-6 h-6 rounded-lg border-outline-variant text-primary focus:ring-primary-container bg-surface cursor-pointer" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface group-has-[:checked]:line-through group-has-[:checked]:opacity-50">Evening Reflection Journal</span>
+</label>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Progress Overview (Pebble Tracks) -->
+<section class="mt-section-gap">
+<div class="flex justify-between items-end mb-4">
+<h3 class="font-headline-md text-headline-md">Weekly Journey</h3>
+<span class="font-label-sm text-label-sm text-primary">12 / 20 Hours</span>
+</div>
+<div class="flex gap-2 h-8">
+<div class="flex-1 bg-tertiary-container rounded-full pebble-step"></div>
+<div class="flex-1 bg-tertiary-container rounded-full pebble-step"></div>
+<div class="flex-1 bg-tertiary-container rounded-full pebble-step"></div>
+<div class="flex-1 bg-tertiary-container rounded-full pebble-step"></div>
+<div class="flex-1 bg-tertiary-container rounded-full pebble-step"></div>
+<div class="flex-1 bg-surface-container-high rounded-full pebble-step"></div>
+<div class="flex-1 bg-surface-container-high rounded-full pebble-step"></div>
+</div>
+</section>
+<!-- Baby's Growth Feed Section -->
+<section class="mt-section-gap mb-12">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-headline-md text-headline-md flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">child_care</span>
+                    Baby's Growth
+                </h3>
+<button class="text-primary font-label-sm text-label-sm flex items-center gap-1 hover:underline">
+                    View Journal <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<!-- Feed Card 1 -->
+<div class="bg-surface-container-lowest rounded-lg p-6 sun-shadow border border-surface-container group">
+<div class="flex gap-6 items-start">
+<div class="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 sun-shadow border-4 border-white rotate-[-2deg] group-hover:rotate-0 transition-transform duration-500">
+<img alt="Baby took first steps" class="w-full h-full object-cover" data-alt="A soft, heartwarming photo of a baby's tiny feet taking a first tentative step on a warm wooden floor. The scene is bathed in bright, natural sunlight, with a dreamy, high-key aesthetic that emphasizes soft shadows and a cozy, cream-toned home environment. The mood is triumphant and emotionally resonant." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzPbNfp7LeggOM7Gue5ywfv5qtNBofrymmkvufUmoRYWBhnf44_jXNB6dF6RkqB-OpMeoA0bsKT_YZ0I2c4j4Alfn1dDh62hgWvcZ4jubJCmIstiDdd_Atw3aWrwdKm0BJwL8Q7WMxu7SFPZ7apdyNSlpL8HH0fR7fZz_3fJLTVFuLlpehsYg-5dquDPgHUqoWEO_NtoJyHSquxJ--GckomFktSGcHuqOhvShgm-8CMYZukuasu6ejOW1EKcVKoCNF6KkUWLgBA76i"/>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-[11px] text-tertiary bg-tertiary-fixed px-2 py-0.5 rounded-full w-max mb-2">MILESTONE</span>
+<p class="font-body-md text-body-md text-on-surface leading-snug">"Baby took his first steps today! He looked so determined reaching for his toy."</p>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-3 opacity-60">Today, 10:24 AM</span>
+</div>
+</div>
+</div>
+<!-- Feed Card 2 (Sticker Style) -->
+<div class="bg-surface-container-lowest rounded-lg p-6 sun-shadow border border-surface-container relative">
+<!-- Milestone Sticker Component -->
+<div class="absolute -right-2 -top-2 w-16 h-16 bg-white rounded-full flex items-center justify-center sun-shadow border-4 border-primary-container p-2 rotate-[15deg] z-10 select-none">
+<span class="material-symbols-outlined text-primary-container text-4xl" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<div class="flex gap-6 items-start">
+<div class="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 sun-shadow border-4 border-white rotate-[3deg] group-hover:rotate-0 transition-transform duration-500">
+<img alt="Baby laughing" class="w-full h-full object-cover" data-alt="A candid, high-resolution close-up of a baby laughing joyfully, showing first two tiny teeth. The background is a soft, cream-colored blanket with a gentle tactile texture. Bright, diffused daylight fills the frame, creating a cheerful and inviting light-mode aesthetic that fits a soft, nurturing UI style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPsWng6QHzvIp4tHzKtW96gjFybkFN3MwZvj5Qf6ia2LsnB3BU1XjW1NZ3OjiucZadVfHtAQCAfVtQ25n6EGHkMSFmN7dF68edH2ci8bqEdkTDoBp0FJjiYZt77FuG7KifFXrIoCRFbvFHUSqy87F7T7WxGYbMpavdM3g2aOx5BnGwc7OLk4ylsGSShqiyfWtEQdMYJk-w1fc5-xexu6LAOdtrTo_Lg-VjKVTPKp97ehIkHx_MuTJMBcmrM2Qrffs6FfVFbWVf9LQt"/>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-[11px] text-primary bg-primary-fixed px-2 py-0.5 rounded-full w-max mb-2">NEW DISCOVERY</span>
+<p class="font-body-md text-body-md text-on-surface leading-snug">Found his own shadow and spent 5 minutes trying to catch it. Pure joy!</p>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-3 opacity-60">Yesterday</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full z-50">
+<!-- Glass Effect -->
+<div class="absolute inset-0 bg-surface-container-lowest/80 backdrop-blur-lg rounded-t-lg shadow-[0_-10px_30px_rgba(181,141,103,0.1)]"></div>
+<div class="relative flex justify-around items-center px-4 pb-6 pt-3 max-w-[600px] mx-auto">
+<!-- Home (Active) -->
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-xl px-5 py-2 transition-all active:scale-90" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-sm text-label-sm mt-1">Home</span>
+</a>
+<!-- Goals -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high px-4 py-2 rounded-xl transition-colors active:scale-90" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-sm text-label-sm mt-1">Goals</span>
+</a>
+<!-- Records -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high px-4 py-2 rounded-xl transition-colors active:scale-90" href="#">
+<span class="material-symbols-outlined">edit_note</span>
+<span class="font-label-sm text-label-sm mt-1">Records</span>
+</a>
+<!-- Diary -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high px-4 py-2 rounded-xl transition-colors active:scale-90" href="#">
+<span class="material-symbols-outlined">auto_stories</span>
+<span class="font-label-sm text-label-sm mt-1">Diary</span>
+</a>
+</div>
+</nav>
+<script>
+        // Simple micro-interaction for the timer button
+        const startBtn = document.getElementById('startTimer');
+        let isTimerRunning = false;
+
+        startBtn.addEventListener('click', () => {
+            isTimerRunning = !isTimerRunning;
+            if (isTimerRunning) {
+                startBtn.classList.remove('bg-primary-container');
+                startBtn.classList.add('bg-tertiary-container');
+                startBtn.querySelector('.material-symbols-outlined').innerText = 'pause';
+                startBtn.querySelector('.font-headline-md').innerText = '00:00';
+                startBtn.querySelector('.font-label-sm').innerText = 'RUNNING';
+            } else {
+                startBtn.classList.add('bg-primary-container');
+                startBtn.classList.remove('bg-tertiary-container');
+                startBtn.querySelector('.material-symbols-outlined').innerText = 'play_arrow';
+                startBtn.querySelector('.font-headline-md').innerText = 'Start';
+                startBtn.querySelector('.font-label-sm').innerText = 'TIMER';
+            }
+        });
+
+        // Add a subtle entrance animation for pebbles
+        document.querySelectorAll('.pebble-step').forEach((pebble, index) => {
+            pebble.style.opacity = '0';
+            pebble.style.transform = 'translateY(10px)';
+            setTimeout(() => {
+                pebble.style.opacity = '1';
+                pebble.style.transform = 'translateY(0)';
+            }, 100 * index);
+        });
+    </script>
+</body></html>

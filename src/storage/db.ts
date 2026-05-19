@@ -1,4 +1,4 @@
-import { openDB } from 'idb'
+import { IDBPDatabase, openDB } from 'idb'
 import type { DBSchema } from 'idb'
 import type {
   DiaryEntry,
@@ -47,30 +47,38 @@ interface GrowthAppDB extends DBSchema {
   }
 }
 
+const DB_VERSION = 1
+
+function createSchema(db: IDBPDatabase<GrowthAppDB>) {
+  const members = db.createObjectStore('members', { keyPath: 'id' })
+  const goals = db.createObjectStore('goals', { keyPath: 'id' })
+  goals.createIndex('by-member', 'memberId')
+
+  const tasks = db.createObjectStore('tasks', { keyPath: 'id' })
+  tasks.createIndex('by-goal', 'goalId')
+
+  const records = db.createObjectStore('records', { keyPath: 'id' })
+  records.createIndex('by-goal', 'goalId')
+  records.createIndex('by-date', 'date')
+
+  const plans = db.createObjectStore('plans', { keyPath: 'id' })
+  plans.createIndex('by-date', 'date')
+
+  const milestones = db.createObjectStore('milestones', { keyPath: 'id' })
+  milestones.createIndex('by-goal', 'goalId')
+
+  const diary = db.createObjectStore('diary', { keyPath: 'id' })
+  diary.createIndex('by-date', 'date')
+
+  void members
+}
+
 export function openGrowthAppDb(name = 'growth-app') {
-  return openDB<GrowthAppDB>(name, 1, {
-    upgrade(db) {
-      const members = db.createObjectStore('members', { keyPath: 'id' })
-      const goals = db.createObjectStore('goals', { keyPath: 'id' })
-      goals.createIndex('by-member', 'memberId')
-
-      const tasks = db.createObjectStore('tasks', { keyPath: 'id' })
-      tasks.createIndex('by-goal', 'goalId')
-
-      const records = db.createObjectStore('records', { keyPath: 'id' })
-      records.createIndex('by-goal', 'goalId')
-      records.createIndex('by-date', 'date')
-
-      const plans = db.createObjectStore('plans', { keyPath: 'id' })
-      plans.createIndex('by-date', 'date')
-
-      const milestones = db.createObjectStore('milestones', { keyPath: 'id' })
-      milestones.createIndex('by-goal', 'goalId')
-
-      const diary = db.createObjectStore('diary', { keyPath: 'id' })
-      diary.createIndex('by-date', 'date')
-
-      void members
+  return openDB<GrowthAppDB>(name, DB_VERSION, {
+    upgrade(db, oldVersion) {
+      if (oldVersion < 1) {
+        createSchema(db)
+      }
     },
   })
 }

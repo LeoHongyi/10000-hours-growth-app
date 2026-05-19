@@ -61,9 +61,7 @@ export function buildDailySuggestions(input: {
   tasks: GoalTask[]
   records: StudyRecord[]
 }): PlanItem[] {
-  return buildScoredPlans(input)
-    .slice(0, 3)
-    .map(({ score, ...plan }) => plan)
+  return buildScoredPlans(input).slice(0, 3).map(toPlanItem)
 }
 
 export function buildWeeklyFrameworkSuggestions(input: {
@@ -75,9 +73,15 @@ export function buildWeeklyFrameworkSuggestions(input: {
 }): PlanItem[] {
   return buildScoredPlans(input)
     .slice(0, 5)
-    .map(({ score, ...plan }, index) => ({
-      ...plan,
+    .map((scoredPlan, index) => ({
+      ...toPlanItem(scoredPlan),
       date: toDateKey(input.date, index + 1),
-      suggestedMinutes: Math.max(20, Math.round(plan.suggestedMinutes * 0.8)),
+      suggestedMinutes: Math.max(20, Math.round(scoredPlan.suggestedMinutes * 0.8)),
     }))
+}
+
+function toPlanItem(scoredPlan: ReturnType<typeof buildScoredPlans>[number]): PlanItem {
+  const { score, ...plan } = scoredPlan
+  void score
+  return plan
 }

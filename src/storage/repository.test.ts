@@ -139,4 +139,93 @@ describe('app repository', () => {
     expect(snapshot.milestones).toEqual([])
     expect(snapshot.diary).toEqual([])
   })
+
+  it('replaces all local data from a backup snapshot', async () => {
+    const repo = createAppRepository('growth-app-test')
+
+    const firstMembers = await repo.saveHousehold(['妈妈', '爸爸'])
+    const firstGoal = await repo.createGoal({
+      memberId: firstMembers[0].id,
+      title: '旧目标',
+      targetMinutes: 100,
+    })
+
+    await repo.addStudyRecord({
+      memberId: firstMembers[0].id,
+      goalId: firstGoal.id,
+      date: '2026-05-14',
+      durationMinutes: 30,
+      note: '旧记录',
+      isManualEntry: true,
+    })
+
+    await repo.replaceSnapshot({
+      members: [
+        {
+          id: 'member-1',
+          name: '外婆',
+          avatarColor: '#ffffff',
+          sortOrder: 0,
+        },
+      ],
+      goals: [
+        {
+          id: 'goal-1',
+          memberId: 'member-1',
+          title: '新目标',
+          targetMinutes: 600,
+          completedMinutes: 45,
+          isActive: true,
+          createdAt: '2026-05-15T00:00:00.000Z',
+        },
+      ],
+      tasks: [],
+      records: [
+        {
+          id: 'record-1',
+          memberId: 'member-1',
+          goalId: 'goal-1',
+          date: '2026-05-15',
+          durationMinutes: 45,
+          note: '新记录',
+          isManualEntry: true,
+          createdAt: '2026-05-15T00:00:00.000Z',
+        },
+      ],
+      plans: [],
+      milestones: [],
+      diary: [],
+    })
+
+    const snapshot = await repo.getSnapshot()
+
+    expect(snapshot.members.map((member) => member.name)).toEqual(['外婆'])
+    expect(snapshot.goals.map((goal) => goal.title)).toEqual(['新目标'])
+    expect(snapshot.records.map((record) => record.note)).toEqual(['新记录'])
+  })
+
+  it('clears all local app data', async () => {
+    const repo = createAppRepository('growth-app-test')
+
+    const members = await repo.saveHousehold(['妈妈', '爸爸'])
+    await repo.createGoal({
+      memberId: members[0].id,
+      title: '蒙氏学习',
+      targetMinutes: 500 * 60,
+    })
+
+    await repo.clearAll()
+
+    const snapshot = await repo.getSnapshot()
+
+    expect(snapshot).toEqual({
+      members: [],
+      goals: [],
+      tasks: [],
+      records: [],
+      plans: [],
+      milestones: [],
+      diary: [],
+    })
+  })
 })

@@ -30,7 +30,7 @@ describe('PlansPage', () => {
       />,
     )
 
-    expect(screen.getByText('本月已投入 5h 40m')).toBeInTheDocument()
+    expect(screen.getByText('本月已投入 5小时 40分钟')).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: '完成这条' }))
     expect(onChangeStatus).toHaveBeenCalledWith('p1', 'completed')
   })

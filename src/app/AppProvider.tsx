@@ -1,4 +1,4 @@
-import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import type { AppSnapshot, MilestoneRecord, PlanItem, PlanStatus } from '../domain/types'
 import { getNewMilestone } from '../domain/milestones'
 import { buildDailySuggestions, buildWeeklyFrameworkSuggestions } from '../domain/suggestions'
@@ -34,6 +34,13 @@ type ManualRecordInput = {
   note: string
 }
 
+type BackupFile = {
+  app: '10000-hours-growth-app'
+  version: 1
+  exportedAt: string
+  data: AppSnapshot
+}
+
 export type AppContextValue = AppSnapshot & {
   hydrated: boolean
   ready: boolean
@@ -63,9 +70,33 @@ export type AppContextValue = AppSnapshot & {
   activeMilestone: MilestoneRecord | null
   closeMilestone: () => void
   createDiaryEntry: (input: { date: string; note: string; photo?: File }) => Promise<void>
+  exportBackup: () => Promise<BackupFile>
+  importBackup: (file: File) => Promise<void>
+  clearAllData: () => Promise<void>
 }
 
 const AppContext = createContext<AppContextValue | null>(null)
+
+function isBackupFile(value: unknown): value is BackupFile {
+  if (!value || typeof value !== 'object') {
+    return false
+  }
+
+  const backup = value as BackupFile
+  return (
+    backup.app === '10000-hours-growth-app' &&
+    backup.version === 1 &&
+    typeof backup.exportedAt === 'string' &&
+    !!backup.data &&
+    Array.isArray(backup.data.members) &&
+    Array.isArray(backup.data.goals) &&
+    Array.isArray(backup.data.tasks) &&
+    Array.isArray(backup.data.records) &&
+    Array.isArray(backup.data.plans) &&
+    Array.isArray(backup.data.milestones) &&
+    Array.isArray(backup.data.diary)
+  )
+}
 
 function startOfWeekKey(nowDate = new Date()) {
   const date = new Date(nowDate)
@@ -86,12 +117,12 @@ export function AppProvider({ children }: PropsWithChildren) {
   const [activeTimer, setActiveTimer] = useState<StoredActiveTimer | null>(() => loadActiveTimer())
   const [activeMilestone, setActiveMilestone] = useState<MilestoneRecord | null>(null)
 
-  const refresh = async () => {
+  const refresh = useCallback(async () => {
     setSnapshot(await repository.getSnapshot())
     setHydrated(true)
-  }
+  }, [])
 
-  const ensureTodaySuggestions = async () => {
+  const ensureTodaySuggestions = useCallback(async () => {
     const today = new Date().toISOString().slice(0, 10)
     const weekEnd = addDaysKey(today, 7)
     const hasTodayPlans = snapshot.plans.some((plan) => plan.date === today)
@@ -127,11 +158,11 @@ export function AppProvider({ children }: PropsWithChildren) {
 
     await repository.savePlans([...generatedToday, ...generatedWeekly])
     await refresh()
-  }
+  }, [refresh, snapshot])
 
   useEffect(() => {
     void refresh()
-  }, [])
+  }, [refresh])
 
   useEffect(() => {
     if (!hydrated || snapshot.members.length !== 2) {
@@ -139,14 +170,14 @@ export function AppProvider({ children }: PropsWithChildren) {
     }
 
     void ensureTodaySuggestions()
-  }, [hydrated, snapshot])
+  }, [ensureTodaySuggestions, hydrated, snapshot])
 
   const persistTimer = (timer: StoredActiveTimer | null) => {
     setActiveTimer(timer)
     saveActiveTimer(timer)
   }
 
-  const maybeCelebrate = async (goalId: string, previousMinutes: number, nextMinutes: number) => {
+  const maybeCelebrate = useCallback(async (goalId: string, previousMinutes: number, nextMinutes: number) => {
     const reachedHours = snapshot.milestones
       .filter((item) => item.goalId === goalId)
       .map((item) => item.milestoneHours)
@@ -158,7 +189,7 @@ export function AppProvider({ children }: PropsWithChildren) {
 
     await repository.saveMilestone(milestone)
     setActiveMilestone(milestone)
-  }
+  }, [snapshot.milestones])
 
   const value = useMemo<AppContextValue>(() => {
     const today = new Date().toISOString().slice(0, 10)
@@ -311,8 +342,32 @@ export function AppProvider({ children }: PropsWithChildren) {
         })
         await refresh()
       },
+      exportBackup: async () => ({
+        app: '10000-hours-growth-app',
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        data: await repository.getSnapshot(),
+      }),
+      importBackup: async (file) => {
+        const parsed = JSON.parse(await file.text()) as unknown
+
+        if (!isBackupFile(parsed)) {
+          throw new Error('Invalid backup file')
+        }
+
+        await repository.replaceSnapshot(parsed.data)
+        persistTimer(null)
+        setActiveMilestone(null)
+        await refresh()
+      },
+      clearAllData: async () => {
+        await repository.clearAll()
+        persistTimer(null)
+        setActiveMilestone(null)
+        await refresh()
+      },
     }
-  }, [activeMilestone, activeTimer, hydrated, snapshot])
+  }, [activeMilestone, activeTimer, ensureTodaySuggestions, hydrated, maybeCelebrate, refresh, snapshot])
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>
 }

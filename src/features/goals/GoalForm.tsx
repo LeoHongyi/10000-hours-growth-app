@@ -1,4 +1,5 @@
 import { FormEvent, useState } from 'react'
+import { usePreferences } from '../../app/preferences'
 import type { Member } from '../../domain/types'
 
 type GoalCreateInput = {
@@ -14,6 +15,7 @@ type GoalFormProps = {
 }
 
 export function GoalForm({ members, onCreateGoal }: GoalFormProps) {
+  const { t } = usePreferences()
   const [memberId, setMemberId] = useState(members[0]?.id ?? '')
   const [title, setTitle] = useState('')
   const [targetHours, setTargetHours] = useState('')
@@ -27,12 +29,12 @@ export function GoalForm({ members, onCreateGoal }: GoalFormProps) {
     const parsedTargetHours = Number(targetHours)
 
     if (!trimmedTitle) {
-      setError('请输入目标名称')
+      setError(t('请输入目标名称'))
       return
     }
 
     if (!Number.isFinite(parsedTargetHours) || parsedTargetHours <= 0) {
-      setError('请输入有效的目标小时数')
+      setError(t('请输入有效的目标小时数'))
       return
     }
 
@@ -54,10 +56,20 @@ export function GoalForm({ members, onCreateGoal }: GoalFormProps) {
   }
 
   return (
-    <form className="page-card stack-md" onSubmit={handleSubmit}>
-      <h2>新增年度目标</h2>
-      <label className="stack-xs">
-        <span>成员</span>
+    <form className="page-card form-grid journal-texture" onSubmit={handleSubmit}>
+      <div>
+        <p className="eyebrow">{t('种下新目标')}</p>
+        <h2>{t('新增年度目标')}</h2>
+        <p className="muted">{t('把长期愿望拆成可以持续照看的小时和小任务。')}</p>
+      </div>
+
+      <label className="field-label">
+        <span>
+          <span className="material-symbols-outlined" aria-hidden="true">
+            group
+          </span>
+          {t('成员')}
+        </span>
         <select value={memberId} onChange={(event) => setMemberId(event.target.value)}>
           {members.map((member) => (
             <option key={member.id} value={member.id}>
@@ -66,30 +78,52 @@ export function GoalForm({ members, onCreateGoal }: GoalFormProps) {
           ))}
         </select>
       </label>
-      <label className="stack-xs">
-        <span>目标名称</span>
-        <input aria-label="目标名称" value={title} onChange={(event) => setTitle(event.target.value)} />
+
+      <label className="field-label">
+        <span>
+          <span className="material-symbols-outlined" aria-hidden="true">
+            target
+          </span>
+          {t('目标名称')}
+        </span>
+        <input aria-label={t('目标名称')} value={title} onChange={(event) => setTitle(event.target.value)} />
       </label>
-      <label className="stack-xs">
-        <span>年度目标（小时）</span>
+
+      <label className="field-label">
+        <span>
+          <span className="material-symbols-outlined" aria-hidden="true">
+            schedule
+          </span>
+          {t('年度目标（小时）')}
+        </span>
         <input
-          aria-label="年度目标（小时）"
+          className="number-well"
+          aria-label={t('年度目标（小时）')}
           inputMode="numeric"
           value={targetHours}
           onChange={(event) => setTargetHours(event.target.value)}
         />
       </label>
-      <label className="stack-xs">
-        <span>小任务（逗号分隔）</span>
+
+      <label className="field-label">
+        <span>
+          <span className="material-symbols-outlined" aria-hidden="true">
+            format_list_bulleted
+          </span>
+          {t('小任务（逗号分隔）')}
+        </span>
         <input
-          aria-label="小任务（逗号分隔）"
+          aria-label={t('小任务（逗号分隔）')}
           value={taskTitles}
           onChange={(event) => setTaskTitles(event.target.value)}
         />
       </label>
       {error ? <p className="error-text">{error}</p> : null}
       <button className="primary-button" type="submit">
-        新增目标
+        {t('新增目标')}
+        <span className="material-symbols-outlined" aria-hidden="true">
+          add_circle
+        </span>
       </button>
     </form>
   )

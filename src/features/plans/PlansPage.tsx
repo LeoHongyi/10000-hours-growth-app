@@ -1,3 +1,4 @@
+import { usePreferences } from '../../app/preferences'
 import type { PlanItem, PlanStatus } from '../../domain/types'
 
 type PlansPageProps = {
@@ -8,37 +9,41 @@ type PlansPageProps = {
   onReplacePlan: (planId: string) => Promise<void> | void
 }
 
-const formatDuration = (minutes: number) => `${Math.floor(minutes / 60)}h ${minutes % 60}m`
-
 export function PlansPage({ todayPlans, weeklyPlans, monthlyMinutes, onChangeStatus, onReplacePlan }: PlansPageProps) {
+  const { formatDuration, t } = usePreferences()
+
   return (
     <section className="stack-md">
       <section className="page-card stack-xs">
-        <p className="eyebrow">本月计划概览</p>
-        <h1>计划</h1>
-        <p>本月已投入 {formatDuration(monthlyMinutes)}</p>
+        <p className="eyebrow">{t('本月计划概览')}</p>
+        <h1>{t('计划')}</h1>
+        <p>
+          {t('本月已投入')} {formatDuration(monthlyMinutes)}
+        </p>
       </section>
 
       <section className="page-card stack-md">
-        <h2>今日建议</h2>
+        <h2>{t('今日建议')}</h2>
         {todayPlans.length === 0 ? (
-          <p className="muted">今天的建议已经处理完了，去首页开始下一段专注。</p>
+          <p className="muted">{t('今天的建议已经处理完了，去首页开始下一段专注。')}</p>
         ) : (
           todayPlans.map((plan) => (
             <article key={plan.id} className="list-row">
               <div>
                 <strong>{plan.title}</strong>
-                <p>{plan.suggestedMinutes} 分钟</p>
+                <p>
+                  {plan.suggestedMinutes} {t('分钟')}
+                </p>
               </div>
               <div className="button-row">
                 <button className="secondary-button" type="button" onClick={() => onChangeStatus(plan.id, 'completed')}>
-                  完成这条
+                  {t('完成这条')}
                 </button>
                 <button className="ghost-button" type="button" onClick={() => onChangeStatus(plan.id, 'skipped')}>
-                  跳过
+                  {t('跳过')}
                 </button>
                 <button className="ghost-button" type="button" onClick={() => onReplacePlan(plan.id)}>
-                  换一个
+                  {t('换一个')}
                 </button>
               </div>
             </article>
@@ -47,9 +52,9 @@ export function PlansPage({ todayPlans, weeklyPlans, monthlyMinutes, onChangeSta
       </section>
 
       <section className="page-card stack-md">
-        <h2>下周框架</h2>
+        <h2>{t('下周框架')}</h2>
         {weeklyPlans.length === 0 ? (
-          <p className="muted">下周框架会在生成后显示在这里。</p>
+          <p className="muted">{t('下周框架会在生成后显示在这里。')}</p>
         ) : (
           weeklyPlans.map((plan) => (
             <article key={plan.id} className="list-row">
@@ -57,7 +62,9 @@ export function PlansPage({ todayPlans, weeklyPlans, monthlyMinutes, onChangeSta
                 <strong>{plan.date}</strong>
                 <p>{plan.title}</p>
               </div>
-              <span>{plan.suggestedMinutes} 分钟</span>
+              <span>
+                {plan.suggestedMinutes} {t('分钟')}
+              </span>
             </article>
           ))
         )}

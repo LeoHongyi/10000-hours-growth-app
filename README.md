@@ -151,6 +151,30 @@ npm run test -- --run
 npm run build
 ```
 
+### Automatic deployment
+
+GitHub Actions deploys this app to the existing Cloudflare Pages project `10000-hours-growth-app`
+when changes are pushed to `bootstrap/base`.
+
+Required GitHub repository secrets:
+- `CLOUDFLARE_ACCOUNT_ID`
+- `CLOUDFLARE_API_TOKEN`
+
+The workflow runs `npm ci`, `npm test -- --run`, `npm run build`, then deploys `dist` to Cloudflare Pages.
+
+### Product hardening
+
+Production readiness additions:
+- PWA metadata, install icon, and a lightweight service worker
+- local JSON backup export and import restore
+- local data clear flow with confirmation
+- standalone privacy policy route at `/privacy`
+- global error boundary with a reload recovery path
+- IndexedDB schema version constant and migration entry point
+- ESLint flat config for the current ESLint release
+
+Design references downloaded from Stitch are archived in `docs/design/stitch-assets`.
+
 ## Project status
 
 This repository currently contains a working MVP with:

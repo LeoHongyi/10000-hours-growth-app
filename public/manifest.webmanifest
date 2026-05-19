@@ -1,0 +1,20 @@
+{
+  "name": "温暖成长记录",
+  "short_name": "成长记录",
+  "description": "追踪家庭学习目标、专注时间和成长日记。",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f7efe3",
+  "theme_color": "#f7efe3",
+  "categories": ["productivity", "lifestyle"],
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

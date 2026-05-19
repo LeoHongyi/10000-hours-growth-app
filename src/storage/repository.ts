@@ -1,11 +1,43 @@
-import type { AppSnapshot, Goal, GoalTask, Member, StudyRecord } from '../domain/types'
+import type {
+  AppSnapshot,
+  DiaryEntry,
+  Goal,
+  GoalTask,
+  Member,
+  MilestoneRecord,
+  PlanItem,
+  StudyRecord,
+} from '../domain/types'
 import { openGrowthAppDb } from './db'
 
 const avatarColors = ['#E8C8A1', '#DDB892']
 const createId = () => crypto.randomUUID()
 const now = () => new Date().toISOString()
+const storeNames = ['members', 'goals', 'tasks', 'records', 'plans', 'milestones', 'diary'] as const
 
 type AppDatabase = Awaited<ReturnType<typeof openGrowthAppDb>>
+
+type ImportableSnapshot = {
+  members?: Member[]
+  goals?: Goal[]
+  tasks?: GoalTask[]
+  records?: StudyRecord[]
+  plans?: PlanItem[]
+  milestones?: MilestoneRecord[]
+  diary?: DiaryEntry[]
+}
+
+function normalizeSnapshot(snapshot: ImportableSnapshot): AppSnapshot {
+  return {
+    members: Array.isArray(snapshot.members) ? snapshot.members : [],
+    goals: Array.isArray(snapshot.goals) ? snapshot.goals : [],
+    tasks: Array.isArray(snapshot.tasks) ? snapshot.tasks : [],
+    records: Array.isArray(snapshot.records) ? snapshot.records : [],
+    plans: Array.isArray(snapshot.plans) ? snapshot.plans : [],
+    milestones: Array.isArray(snapshot.milestones) ? snapshot.milestones : [],
+    diary: Array.isArray(snapshot.diary) ? snapshot.diary : [],
+  }
+}
 
 export function createAppRepository(name?: string) {
   async function withDb<T>(callback: (db: AppDatabase) => Promise<T>) {
@@ -28,16 +60,8 @@ export function createAppRepository(name?: string) {
           sortOrder: index,
         }))
 
-        const tx = db.transaction(['members', 'goals', 'tasks', 'records', 'plans', 'milestones', 'diary'], 'readwrite')
-        await Promise.all([
-          tx.objectStore('members').clear(),
-          tx.objectStore('goals').clear(),
-          tx.objectStore('tasks').clear(),
-          tx.objectStore('records').clear(),
-          tx.objectStore('plans').clear(),
-          tx.objectStore('milestones').clear(),
-          tx.objectStore('diary').clear(),
-        ])
+        const tx = db.transaction(storeNames, 'readwrite')
+        await Promise.all(storeNames.map((storeName) => tx.objectStore(storeName).clear()))
         await Promise.all(members.map((member) => tx.objectStore('members').put(member)))
         await tx.done
         return members
@@ -125,6 +149,33 @@ export function createAppRepository(name?: string) {
     async saveDiaryEntry(entry: AppSnapshot['diary'][number]) {
       return withDb(async (db) => {
         await db.put('diary', entry)
+      })
+    },
+
+    async replaceSnapshot(input: ImportableSnapshot) {
+      return withDb(async (db) => {
+        const snapshot = normalizeSnapshot(input)
+        const tx = db.transaction(storeNames, 'readwrite')
+
+        await Promise.all(storeNames.map((storeName) => tx.objectStore(storeName).clear()))
+        await Promise.all([
+          ...snapshot.members.map((item) => tx.objectStore('members').put(item)),
+          ...snapshot.goals.map((item) => tx.objectStore('goals').put(item)),
+          ...snapshot.tasks.map((item) => tx.objectStore('tasks').put(item)),
+          ...snapshot.records.map((item) => tx.objectStore('records').put(item)),
+          ...snapshot.plans.map((item) => tx.objectStore('plans').put(item)),
+          ...snapshot.milestones.map((item) => tx.objectStore('milestones').put(item)),
+          ...snapshot.diary.map((item) => tx.objectStore('diary').put(item)),
+        ])
+        await tx.done
+      })
+    },
+
+    async clearAll() {
+      return withDb(async (db) => {
+        const tx = db.transaction(storeNames, 'readwrite')
+        await Promise.all(storeNames.map((storeName) => tx.objectStore(storeName).clear()))
+        await tx.done
       })
     },
 

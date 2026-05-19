@@ -6,9 +6,11 @@ import { HomePage } from '../features/home/HomePage'
 import { MilestoneModal } from '../features/milestones/MilestoneModal'
 import { OnboardingPage } from '../features/onboarding/OnboardingPage'
 import { PlansPage } from '../features/plans/PlansPage'
+import { PrivacyPage } from '../features/privacy/PrivacyPage'
 import { RecordsPage } from '../features/records/RecordsPage'
 import { AppProvider, AppProviderStub, type AppContextValue, useAppContext } from './AppProvider'
 import { AppShell } from './AppShell'
+import { usePreferences } from './preferences'
 
 type AppProps = {
   ready?: boolean
@@ -66,6 +68,7 @@ function AppRoutes() {
             }
           />
           <Route path="/diary" element={<DiaryPage entries={app.diary} onCreateEntry={app.createDiaryEntry} />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
@@ -104,10 +107,27 @@ const stubAppContext: AppContextValue = {
   activeMilestone: null,
   closeMilestone: () => {},
   createDiaryEntry: noopAsync,
+  exportBackup: async () => ({
+    app: '10000-hours-growth-app',
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    data: {
+      members: [],
+      goals: [],
+      tasks: [],
+      records: [],
+      plans: [],
+      milestones: [],
+      diary: [],
+    },
+  }),
+  importBackup: noopAsync,
+  clearAllData: noopAsync,
 }
 
 function AppInner({ ready, onInitialize }: AppProps) {
   const app = useAppContext()
+  const { t } = usePreferences()
   const resolvedReady = ready ?? app.ready
   const resolvedInitialize = onInitialize ?? app.initializeHousehold
   const hydrated = app.hydrated
@@ -115,7 +135,7 @@ function AppInner({ ready, onInitialize }: AppProps) {
   if (!hydrated) {
     return (
       <section className="page-card">
-        <p>正在准备成长记录…</p>
+        <p>{t('正在准备成长记录…')}</p>
       </section>
     )
   }

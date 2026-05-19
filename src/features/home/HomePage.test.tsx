@@ -30,7 +30,7 @@ describe('HomePage', () => {
       </MemoryRouter>,
     )
 
-    expect(screen.getByText('本周家庭投入 2h 40m')).toBeInTheDocument()
+    expect(screen.getByText('本周家庭投入 2小时 40分钟')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '开始这条建议' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: '去家庭日记' })).toHaveAttribute('href', '/diary')
   })
