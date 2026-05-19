@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { usePreferences } from '../../app/preferences'
-import type { PlanItem } from '../../domain/types'
+import type { DiaryEntry, PlanItem } from '../../domain/types'
 import { ProgressBar } from '../shared/ProgressBar'
 
 type GoalPreview = {
@@ -14,12 +14,16 @@ type HomePageProps = {
   weeklyMinutes: number
   suggestions: PlanItem[]
   goalPreview: GoalPreview[]
+  diaryEntries: DiaryEntry[]
   onStartSuggestion: (plan: PlanItem) => void
 }
 
-export function HomePage({ weeklyMinutes, suggestions, goalPreview, onStartSuggestion }: HomePageProps) {
+export function HomePage({ weeklyMinutes, suggestions, goalPreview, diaryEntries, onStartSuggestion }: HomePageProps) {
   const { formatDuration, formatHours, t } = usePreferences()
   const weeklyTarget = Math.max(weeklyMinutes, 20 * 60)
+  const recentDiaryEntries = [...diaryEntries]
+    .sort((a, b) => b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt))
+    .slice(0, 2)
 
   return (
     <section className="page-stack">
@@ -137,28 +141,49 @@ export function HomePage({ weeklyMinutes, suggestions, goalPreview, onStartSugge
             </span>
           </Link>
         </div>
-        <div className="feed-grid">
-          <article className="feed-card">
-            <div className="memory-thumb" aria-hidden="true">
-              <span className="material-symbols-outlined">steps</span>
-            </div>
-            <div>
-              <span className="badge sage">{t('里程碑')}</span>
-              <p style={{ marginTop: 10 }}>{t('顺手记下一张照片和一句今天的小变化。')}</p>
-              <p className="mini-label">{t('今天')}</p>
-            </div>
-          </article>
-          <article className="feed-card">
-            <div className="memory-thumb" aria-hidden="true" style={{ transform: 'rotate(3deg)' }}>
-              <span className="material-symbols-outlined">auto_awesome</span>
-            </div>
-            <div>
-              <span className="badge peach">{t('新发现')}</span>
-              <p style={{ marginTop: 10 }}>{t('家庭成长和宝宝时光会一起沉淀在日记里。')}</p>
-              <p className="mini-label">{t('温馨时刻')}</p>
-            </div>
-          </article>
-        </div>
+        {recentDiaryEntries.length === 0 ? (
+          <div className="feed-grid">
+            <article className="feed-card">
+              <div className="memory-thumb" aria-hidden="true">
+                <span className="material-symbols-outlined">steps</span>
+              </div>
+              <div>
+                <span className="badge sage">{t('里程碑')}</span>
+                <p style={{ marginTop: 10 }}>{t('顺手记下一张照片和一句今天的小变化。')}</p>
+                <p className="mini-label">{t('今天')}</p>
+              </div>
+            </article>
+            <article className="feed-card">
+              <div className="memory-thumb" aria-hidden="true" style={{ transform: 'rotate(3deg)' }}>
+                <span className="material-symbols-outlined">auto_awesome</span>
+              </div>
+              <div>
+                <span className="badge peach">{t('新发现')}</span>
+                <p style={{ marginTop: 10 }}>{t('家庭成长和宝宝时光会一起沉淀在日记里。')}</p>
+                <p className="mini-label">{t('温馨时刻')}</p>
+              </div>
+            </article>
+          </div>
+        ) : (
+          <div className="feed-grid">
+            {recentDiaryEntries.map((entry, index) => (
+              <article key={entry.id} className="feed-card">
+                {entry.photo ? (
+                  <img className="memory-photo" src={entry.photo} alt={entry.note || t('宝宝成长记录')} />
+                ) : (
+                  <div className="memory-thumb" aria-hidden="true" style={{ transform: index % 2 === 0 ? 'rotate(-3deg)' : 'rotate(3deg)' }}>
+                    <span className="material-symbols-outlined">{index === 0 ? 'child_care' : 'auto_awesome'}</span>
+                  </div>
+                )}
+                <div>
+                  <span className={index % 2 === 0 ? 'badge sage' : 'badge peach'}>{entry.date}</span>
+                  <p style={{ marginTop: 10 }}>{entry.note || t('今天的小变化')}</p>
+                  <p className="mini-label">{index === 0 ? t('最新记录') : t('温馨时刻')}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
       </section>
     </section>
   )

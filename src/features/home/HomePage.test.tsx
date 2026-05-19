@@ -19,6 +19,14 @@ const props = {
     },
   ],
   goalPreview: [{ id: 'g1', title: '蒙氏学习', completedMinutes: 180, targetMinutes: 30000 }],
+  diaryEntries: [
+    {
+      id: 'd1',
+      date: '2026-05-18',
+      note: '今天第一次自己拍手了',
+      createdAt: '2026-05-18T10:00:00.000Z',
+    },
+  ],
   onStartSuggestion: vi.fn(),
 }
 
@@ -32,6 +40,7 @@ describe('HomePage', () => {
 
     expect(screen.getByText('本周家庭投入 2小时 40分钟')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '开始这条建议' })).toBeInTheDocument()
+    expect(screen.getByText('今天第一次自己拍手了')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: '去家庭日记' })).toHaveAttribute('href', '/diary')
   })
 })

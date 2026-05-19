@@ -169,6 +169,7 @@ const english: Record<string, string> = {
   '还没有日记': 'No diary entries yet',
   '保存第一条成长记录后，它会出现在这里。': 'Your first growth record will appear here.',
   '今天的小变化': 'Today’s small change',
+  '最新记录': 'Latest record',
   '这段温馨时光已保存在家庭成长花园里。': 'This warm moment is saved in the family growth garden.',
   '本月计划概览': 'Monthly plan overview',
   '本月已投入': 'Invested this month',

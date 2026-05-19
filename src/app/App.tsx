@@ -31,6 +31,7 @@ function AppRoutes() {
                 weeklyMinutes={app.weeklyMinutes}
                 suggestions={app.todaySuggestions}
                 goalPreview={app.goals.slice(0, 2)}
+                diaryEntries={app.diary}
                 onStartSuggestion={(plan) =>
                   app.startActiveTimer({
                     memberId: plan.memberId,

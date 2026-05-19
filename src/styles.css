@@ -923,6 +923,17 @@ p {
   font-size: 36px;
 }
 
+.memory-photo {
+  width: 82px;
+  height: 82px;
+  flex: 0 0 auto;
+  border: 5px solid #ffffff;
+  border-radius: 24px;
+  object-fit: cover;
+  box-shadow: 0 18px 28px -20px rgba(181, 141, 103, 0.85);
+  transform: rotate(-3deg);
+}
+
 .modal-scrim {
   position: fixed;
   inset: 0;
